@@ -23,5 +23,6 @@ setup(
     description='',
     long_description=long_description,
     # scripts=glob(os.path.join('scripts', '*py')),
-    keywords=''
+    keywords='',
+    install_requires=['click', 'networkx']
 )
