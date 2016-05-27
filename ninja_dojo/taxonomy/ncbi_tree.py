@@ -16,13 +16,13 @@ path = t_tree.get_name_path_with_taxon_id(taxon_id)
 import os
 import networkx as nx
 import csv
-import sys
 from functools import lru_cache
 from collections import defaultdict
 
-from ninja_shogun.utilities.pickleable import Pickleable
-from ninja_shogun.utilities.downloadable import download
-from ninja_shogun.downloaders.download_ncbi_taxonomy import NCBITaxdmp
+from ninja_trebuchet.factory import Pickleable, download
+
+from ninja_dojo import SETTINGS, LOGGER
+from ninja_dojo.downloaders import NCBITaxdmp
 
 
 class NCBITree(Pickleable):
@@ -34,7 +34,7 @@ class NCBITree(Pickleable):
                      ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__')))
         else:
             self.mp_ranks = mp_ranks
-        super().__init__()
+        super().__init__(SETTINGS, LOGGER)
 
     @download
     def _parse(self):
