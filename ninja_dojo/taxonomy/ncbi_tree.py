@@ -133,7 +133,7 @@ class NCBITree(Pickleable):
     # Note that this will create a global cache for all instances of NCBITree.
     # Will be fine unless if you want to compare trees.
     @lru_cache(maxsize=128)
-    def mp_lineage(self, taxon_id):
+    def gg_lineage(self, taxon_id):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
         name_lineage = []
         for x in taxon_id_lineage:
@@ -146,7 +146,7 @@ class NCBITree(Pickleable):
 
 def main():
     ncbi_tree = NCBITree()
-    print(ncbi_tree.mp_lineage(9606))
+    print(ncbi_tree.gg_lineage(9606))
 
 if __name__ == '__main__':
     main()
