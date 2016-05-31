@@ -1,8 +1,9 @@
 import urllib.request
 import tarfile
 
-from ninja_dojo import SETTINGS
 from ninja_trebuchet.factory import Downloadable
+
+from .. import SETTINGS
 
 
 class NCBITaxdmp(Downloadable):

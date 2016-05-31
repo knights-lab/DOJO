@@ -1,8 +1,9 @@
 import os
 
 from ninja_trebuchet.factory import Downloadable
-from ninja_trebuchet.util import download_txt_url
-from ninja_dojo import SETTINGS
+from ninja_trebuchet.utils import download_txt_url
+
+from .. import SETTINGS
 
 
 class SilvaMapping(Downloadable):

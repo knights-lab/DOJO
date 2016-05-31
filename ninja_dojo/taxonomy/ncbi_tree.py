@@ -21,8 +21,8 @@ from collections import defaultdict
 
 from ninja_trebuchet.factory import Pickleable, download
 
-from ninja_dojo import SETTINGS, LOGGER
-from ninja_dojo.downloaders import NCBITaxdmp
+from .. import SETTINGS, LOGGER
+from ..downloaders import NCBITaxdmp
 
 
 class NCBITree(Pickleable):
