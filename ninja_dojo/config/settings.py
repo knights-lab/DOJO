@@ -11,7 +11,8 @@ def ninja_dojo_settings():
             'http://www.arb-silva.de/fileadmin/silva_databases/release_119/Exports/taxonomy/taxmap_embl_ssu_parc_119.txt',
             'http://www.arb-silva.de/fileadmin/silva_databases/release_119/Exports/taxonomy/taxmap_embl_lsu_parc_119.txt'],
         'silva_taxdmp_dir': ['data', 'silva_taxdmp'],
-        'img_taxdmp_dir': ['data', 'img_taxdmp']
+        'img_taxdmp_dir': ['data', 'img_taxdmp'],
+        'log_persists': False,
     }
 
     return default_settings

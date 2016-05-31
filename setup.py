@@ -21,8 +21,9 @@ setup(
     author=__author__,
     author_email=__email__,
     description='',
+    test_suite='nose.collector',
     long_description=long_description,
     # scripts=glob(os.path.join('scripts', '*py')),
     keywords='',
-    install_requires=['click', 'networkx']
+    install_requires=['click', 'networkx', 'nose']
 )
