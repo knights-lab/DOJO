@@ -5,11 +5,13 @@ from glob import glob
 import os
 from collections import defaultdict
 
+from ninja_dojo.taxonomy.ncbi_tree import NCBITree
+
 
 @click.command()
 @click.argument('path', type=click.Path(exists=True))
 @click.option('-v', '--verbose', is_flag=True)
-def extract_ncbi_tid():
+def extract_ncbi_tid(path, verbose):
     nt = NCBITree()
     for file in glob(os.path.join(path, '*.gold')):
         df = pd.read_csv(file, header=None, sep='\t')
@@ -21,7 +23,7 @@ def extract_ncbi_tid():
                 if not 0 == tid:
                     mp2_to_taxon_id['metaphlan2_name'].append(mp2)
                     mp2_to_taxon_id['ncbi_taxon_id'].append(tid)
-                    mp2_to_taxon_id['lineage'].append(nt.mp_lineage(tid))
+                    mp2_to_taxon_id['lineage'].append(nt.gg_lineage(tid))
                     break
                 elif verbose:
                     print('%s not found' % clade)
@@ -31,6 +33,7 @@ def extract_ncbi_tid():
         df_out.to_csv(os.path.join(path, file[:file.find('.')] + '.ncbi_map.csv'))
         if verbose:
             print('%d misses out of %d' % (i, len(mp2_to_taxon_id['metaphlan2_name'])))
+
 
 def main():
     pass
