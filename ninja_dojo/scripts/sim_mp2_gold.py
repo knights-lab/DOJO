@@ -34,9 +34,5 @@ def extract_ncbi_tid(path, verbose):
         if verbose:
             print('%d misses out of %d' % (i, len(mp2_to_taxon_id['metaphlan2_name'])))
 
-
-def main():
-    pass
-
 if __name__ == '__main__':
-    main()
+    extract_ncbi_tid()

@@ -24,6 +24,11 @@ setup(
     test_suite='nose.collector',
     long_description=long_description,
     # scripts=glob(os.path.join('scripts', '*py')),
+    entry_points={
+        'console_scripts': [
+            'extract_ncbi_tid_from_mp2_gold = ninja_dojo.scripts.sim_mp2_gold:extract_ncbi_tid',
+        ]
+    },
     keywords='',
     install_requires=['click', 'networkx', 'nose', 'pandas']
 )
