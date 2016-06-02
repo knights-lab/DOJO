@@ -25,5 +25,5 @@ setup(
     long_description=long_description,
     # scripts=glob(os.path.join('scripts', '*py')),
     keywords='',
-    install_requires=['click', 'networkx', 'nose']
+    install_requires=['click', 'networkx', 'nose', 'pandas']
 )
