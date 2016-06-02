@@ -13,7 +13,7 @@ from ninja_dojo.taxonomy.ncbi_tree import NCBITree
 @click.option('-v', '--verbose', is_flag=True)
 def extract_ncbi_tid(path, verbose):
     nt = NCBITree()
-    for file in glob(os.path.join(path, '*.gold')):
+    for file in glob(os.path.join(os.path.abspath(path), '*.gold')):
         df = pd.read_csv(file, header=None, sep='\t')
         mp2_to_taxon_id = defaultdict(list)
         i = 0
