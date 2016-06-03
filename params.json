@@ -1,0 +1,6 @@
+{
+  "name": "NINJA-DOJO",
+  "tagline": "",
+  "body": "NINJA-DOJO (Database of Justified Ontologies)\r\n=======\r\nDesigned to house *in silico* and *in vitro* communities for benchmarking functional and taxonomic classification tasks.\r\n\r\nAll taxonomic communities will be evaluated against the NCBI taxonomy at these levels if possible:\r\n\r\n1. superkingdom (k__)\r\n2. phylum (p__)\r\n3. class (c__)\r\n4. order (o__)\r\n5. family (f__)\r\n6. genus (g__)\r\n7. species (s__)\r\n8. strain (t__)\r\n\r\nThe NCBI taxonominy ID (TID) for *Homo Sapien* is:\r\n\r\n9606\r\n\r\nWith its formatted string:\r\n\r\nk__Eukaryota;p__Chordata;c__Mammalia;o__Primates;f__Hominidae;g__Homo;s__Homo_sapiens\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
