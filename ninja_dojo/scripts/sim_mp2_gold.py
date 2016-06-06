@@ -3,8 +3,10 @@ import click
 import pandas as pd
 from glob import glob
 import os
-from collections import defaultdict
+from collections import defaultdict, Counter
 import bcolz
+
+from ninja_trebuchet.parsers import fasta
 
 from ninja_dojo.taxonomy.ncbi_tree import NCBITree
 
@@ -31,16 +33,11 @@ def extract_ncbi_tid(path, verbose):
                     i += 1
 
         df_out = pd.DataFrame(mp2_to_taxon_id, index=None)
-        bcolz_dir = os.path.join(path, file[:file.find('.')] + '.ncbi_map.bcolz')
-
-        if os.path.exists(bcolz_dir):
-            import shutil
-            shutil.rmtree(bcolz_dir)
-
-        bc = bcolz.ctable.fromdataframe(df_out, rootdir=bcolz_dir)
         df_out.to_csv(os.path.join(path, file[:file.find('.')] + '.ncbi_map.csv'))
-        if verbose:
-            print('%d misses out of %d' % (i, len(mp2_to_taxon_id['metaphlan2_name'])))
+
+        with open(os.path.join(path, '%s.fastq' % os.path.basename(file).split('.')[0])) as fastq_fh:
+            pass
+
 
 if __name__ == '__main__':
     extract_ncbi_tid()
