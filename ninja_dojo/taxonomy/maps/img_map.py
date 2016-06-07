@@ -8,7 +8,7 @@ from ... import SETTINGS
 
 
 class IMGMap(Pickleable):
-    def __init__(self, _scroll=Scroll(os.path.join(SETTINGS.img_taxdmp_dir, '00.taxon.tab.txt'))):
+    def __init__(self, _scroll=Scroll(os.path.join(SETTINGS.settings['img_taxdmp_dir'], '00.taxon.tab.txt'))):
         """
 
         :param img_taxdmp_dir:
