@@ -16,15 +16,10 @@ class RefseqMap(Pickleable):
     @download
     def _parse(self):
         # init variables
-        with open(self._downloader.path, 'r') as inf:
+        with open(os.path.join(self._downloader.path, 'assembly_summary_refseq.txt'), 'r') as inf:
             csv_file = csv.reader(inf, delimiter='\t')
 
             # Checking for a header file
             for row in csv_file:
-                try:
-                    ncbi_taxon_id = int(row[1])
-                    self.img2taxon_id[int(row[0])] = ncbi_taxon_id
-                except ValueError as e:
-                    continue
+                print(row)
 
-        self.taxon_id2img = reverse_dict(self.img2taxon_id)
