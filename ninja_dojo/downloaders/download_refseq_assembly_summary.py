@@ -7,9 +7,9 @@ from .. import SETTINGS
 
 
 class RefseqSummary(Downloadable):
-    def __init__(self, _refseq_summary_url=SETTINGS.settings['refseq_summary_url'], _refseq_summary_dir=SETTINGS.settings['refseq_summary_dir']):
+    def __init__(self, _refseq_summary_urls=SETTINGS.settings['refseq_summary_urls'], _refseq_summary_dir=SETTINGS.settings['refseq_summary_dir']):
         super().__init__(_refseq_summary_dir)
-        self.urls = _refseq_summary_url
+        self.urls = _refseq_summary_urls
 
     def download(self):
         for url in self.urls:

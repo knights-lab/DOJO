@@ -1,6 +1,7 @@
 import bcolz
 import os
 import pandas as pd
+from collections import defaultdict
 
 from ninja_trebuchet.utils import reverse_dict
 from ninja_trebuchet.factory import Pickleable, download
@@ -23,12 +24,16 @@ class RefseqMap(Pickleable):
         # columns[0] = 'assembly_instructions'
         # self.df.columns = columns
         # self.ct = bcolz.ctable.fromdataframe(df, rootdir=self.bcolz_path)
+        # self.taxid2refseq_accession = defaultdict(set)
+        self.taxid2refseq_accession = defaultdict(int)
+        for ind, ser in self.df.iterrows():
+            self.taxid2refseq_accession[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
 
     def parse_df(self):
         df = pd.read_csv(os.path.join(self._downloader.path, 'assembly_summary_refseq.txt'),
                          skiprows=[0], sep='\t')
         columns = list(df.columns)
-        columns[0] = 'assembly_instructions'
+        columns[0] = 'assembly_accession'
         df.columns = columns
         return df
 
@@ -40,6 +45,5 @@ class RefseqMap(Pickleable):
     def __setstate__(self, d):
         # TODO add try/except
         self.__dict__.update(d)
-        d['df'] = self.parse_df()
-        self.__dict__.update(d)
+        self.df = self.parse_df()
 
