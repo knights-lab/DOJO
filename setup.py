@@ -30,5 +30,5 @@ setup(
         ]
     },
     keywords='',
-    install_requires=['click', 'networkx', 'nose', 'pandas', 'bcolz', 'skbio']
+    install_requires=['click', 'networkx', 'nose', 'pandas']
 )
