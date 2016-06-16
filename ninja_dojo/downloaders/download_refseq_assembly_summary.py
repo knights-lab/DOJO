@@ -6,7 +6,7 @@ from ninja_trebuchet.utils import download_txt_url
 from .. import SETTINGS
 
 
-class RefseqSummary(Downloadable):
+class RefseqAssemblySummary(Downloadable):
     def __init__(self, _refseq_summary_urls=SETTINGS.settings['refseq_summary_urls'], _refseq_summary_dir=SETTINGS.settings['refseq_summary_dir']):
         super().__init__(_refseq_summary_dir)
         self.urls = _refseq_summary_urls

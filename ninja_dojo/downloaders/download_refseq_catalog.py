@@ -29,8 +29,8 @@ class RefseqCatalog(Downloadable):
 
         # Stream and extract
         with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
-            with open(os.path.join(self.path, 'refseq_catalog.txt'), 'wb') as out_fh:
-                out_fh.write(b'\t'.join([
+            with open(os.path.join(self.path, 'refseq_catalog.csv'), 'wb') as out_fh:
+                out_fh.write(b','.join([
                     b'ncbi_tid',
                     b'accession.version',
                     b'gi',
@@ -40,4 +40,4 @@ class RefseqCatalog(Downloadable):
                     row = line.split(b'\t')
                     if row[2][:2] == b'NC':
                         # ncbi_tid, accession.version, gi, length
-                        out_fh.write(row[0] + b'\t' + row[2] + b'\t' + row[3] + b'\t' + row[6] + b'\n')
+                        out_fh.write(row[0] + b',' + row[2] + b',' + row[3] + b',' + row[6] + b'\n')

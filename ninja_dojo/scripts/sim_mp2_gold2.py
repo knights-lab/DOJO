@@ -9,7 +9,7 @@ import pandas as pd
 from ninja_trebuchet.parsers import FASTA, FASTQ
 
 from ninja_dojo.taxonomy.ncbi_tree import NCBITree
-from ninja_dojo.taxonomy.maps import RefseqMap
+from ninja_dojo.taxonomy.maps import RefseqAssemblyMap
 
 
 @click.command()
@@ -17,7 +17,7 @@ from ninja_dojo.taxonomy.maps import RefseqMap
 @click.option('-v', '--verbose', is_flag=True)
 def extract_ncbi_tid(path, verbose):
     # nt = NCBITree()
-    rf = RefseqMap()
+    rf = RefseqAssemblyMap()
     for file in glob(os.path.join(os.path.abspath(path), '*.gold')):
     #     df = pd.read_csv(file, header=None, sep='\t')
     #     mp2_to_taxon_id = defaultdict(list)
