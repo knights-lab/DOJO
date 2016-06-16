@@ -25,7 +25,7 @@ class RefseqCatalog(Downloadable):
         # Append the url and the filename
         req_file = urllib.request.Request(self.urls[0] + filelist[0])
 
-        # pref = {b'NC', b'AC'}
+        pref = {b'AC', b'NC', b'NG', b'NT', b'NW', b'NS', b'NZ', b'NM'}
 
         # Stream and extract
         with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
@@ -38,6 +38,6 @@ class RefseqCatalog(Downloadable):
                 ]) + b'\n')
                 for line in line_bytestream_gzip(ftp_stream):
                     row = line.split(b'\t')
-                    if row[2][:2] == b'NC':
+                    if row[2][:2] in pref:
                         # ncbi_tid, accession.version, gi, length
                         out_fh.write(row[0] + b',' + row[2] + b',' + row[3] + b',' + row[6] + b'\n')

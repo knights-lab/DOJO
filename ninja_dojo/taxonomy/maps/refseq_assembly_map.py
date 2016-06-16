@@ -18,7 +18,7 @@ class RefseqAssemblyMap(Pickleable):
         self.df = self.parse_df()
         self.taxid2refseq_assembly_accession = defaultdict(int)
         for ind, ser in self.df.iterrows():
-            self.taxid2refseq_accession[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
+            self.taxid2refseq_assembly_accession[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
 
     def parse_df(self):
         df = pd.read_csv(os.path.join(self._downloader.path, 'assembly_summary_refseq.txt'),

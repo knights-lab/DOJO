@@ -4,42 +4,39 @@ from collections import defaultdict
 from glob import glob
 
 import click
-import pandas as pd
+import csv
 
-from ninja_trebuchet.parsers import FASTA, FASTQ
+from ninja_trebuchet.parsers import FASTQ
 
-from ninja_dojo.taxonomy.ncbi_tree import NCBITree
-from ninja_dojo.taxonomy.maps import RefseqAssemblyMap
+from ninja_dojo.taxonomy.maps import RefseqCatalogMap
 
 
 @click.command()
 @click.argument('path', type=click.Path(exists=True))
 @click.option('-v', '--verbose', is_flag=True)
 def extract_ncbi_tid(path, verbose):
-    # nt = NCBITree()
-    rf = RefseqAssemblyMap()
+    rf = RefseqCatalogMap()
     for file in glob(os.path.join(os.path.abspath(path), '*.gold')):
-    #     df = pd.read_csv(file, header=None, sep='\t')
-    #     mp2_to_taxon_id = defaultdict(list)
-    #     i = 0
-    #     for mp2 in df[0]:
-    #         for clade in iter(mp2.split()[::-1]):
-    #             tid = rf.name2taxon_id[clade.replace('_', ' ')]
-    #             if not 0 == tid:
-    #                 mp2_to_taxon_id['metaphlan2_name'].append(mp2)
-    #                 mp2_to_taxon_id['ncbi_taxon_id'].append(tid)
-    #                 mp2_to_taxon_id['lineage'].append(nt.gg_lineage(tid))
-    #                 break
-    #             elif verbose:
-    #                 print('%s not found' % clade)
-    #                 i += 1
-    #
-    #     df_out = pd.DataFrame(mp2_to_taxon_id, index=None)
-    #     df_out.to_csv(os.path.join(path, file[:file.find('.')] + '.ncbi_map.csv'))
-
+        tid_counts = defaultdict(int)
         with open(os.path.join(path, '%s.fastq' % os.path.basename(file).split('.')[0])) as fastq_fh:
-            for header, seq, qual in FASTQ(fastq_fh).read():
-                print(header.split('|')[3].split('.')[0])
+            with open(os.path.join(path, '%s.ninja.fastq') % os.path.basename(file).split('.')[0], 'w') as outf:
+                for header, seq, qual in FASTQ(fastq_fh).read():
+                    header_arr = header.split('|')
+                    if len(header_arr) > 3:
+                        refseq_acc = header_arr[3]
+                        acc = refseq_acc[:refseq_acc.find('.')]
+                        tid = rf.taxid2refseq_accession[acc]
+                        if not tid == 0:
+                            outf.write('@ncbi_tid|%s|%s\n' % (tid, header))
+                            outf.write(seq + '\n')
+                            outf.write('+\n%s\n' % qual)
+                            tid_counts[tid] += 1
+
+        with open(os.path.join(path, '%s.ninja.gold') % os.path.basename(file).split('.')[0], 'w') as outf:
+            writer = csv.writer(outf)
+            writer.writerow(('ncbi_tid', 'count'))
+            for kv in tid_counts.items():
+                writer.writerow(kv)
 
 
 if __name__ == '__main__':
