@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from glob import glob
 import os
 
@@ -15,7 +15,7 @@ long_description = ''
 setup(
     name='ninja_dojo',
     version=__version__,
-    packages=['ninja_dojo'],
+    packages=find_packages(),
     url='',
     license=__license__,
     author=__author__,
