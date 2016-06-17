@@ -26,7 +26,7 @@ setup(
     # scripts=glob(os.path.join('scripts', '*py')),
     entry_points={
         'console_scripts': [
-            'extract_ncbi_tid_from_mp2_gold = ninja_dojo.scripts.sim_mp2_gold2:extract_ncbi_tid',
+            'extract_ncbi_tid_from_mp2_gold = ninja_dojo.scripts.extract_ncbi_tid_from_mp2_gold:extract_ncbi_tid',
         ]
     },
     keywords='',
