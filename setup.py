@@ -1,6 +1,4 @@
 from setuptools import setup, find_packages
-from glob import glob
-import os
 
 __author__ = "Knights Lab"
 __copyright__ = "Copyright (c) 2016--, %s" % __author__
