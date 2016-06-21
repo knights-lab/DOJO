@@ -9,8 +9,8 @@ from ...downloaders import RefseqAssemblySummary
 
 
 class RefseqAssemblyMap(Pickleable):
-    def __init__(self, _downloader=RefseqAssemblySummary()):
-        self._downloader = _downloader
+    def __init__(self, _downloaders=(RefseqAssemblySummary())):
+        self._downloaders = _downloaders
         super().__init__(SETTINGS, LOGGER)
 
     @download
@@ -21,7 +21,7 @@ class RefseqAssemblyMap(Pickleable):
             self.taxid2refseq_assembly_accession[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
 
     def parse_df(self):
-        df = pd.read_csv(os.path.join(self._downloader.path, 'assembly_summary_refseq.txt'),
+        df = pd.read_csv(os.path.join(self._downloaders[0].path, 'assembly_summary_refseq.txt'),
                          skiprows=[0], sep='\t')
         columns = list(df.columns)
         columns[0] = 'assembly_accession'

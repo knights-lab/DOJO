@@ -9,15 +9,15 @@ from ...downloaders.download_silva2ncbi_taxonomy import SilvaMapping
 
 
 class SilvaMap(Pickleable):
-    def __init__(self, _downloader=SilvaMapping()):
-        self._downloader = _downloader
+    def __init__(self, _downloaders=(SilvaMapping())):
+        self._downloaders = [_downloaders]
         super().__init__()
 
     @download
     def _parse(self):
         self.silva_acc2taxon_id = {}
 
-        silva_taxdmp_dir = self._downloader.path
+        silva_taxdmp_dir = self._downloaders[0].path
         files = glob(os.path.join(silva_taxdmp_dir, "*.txt"))
         for file in files:
             with open(file) as inf:

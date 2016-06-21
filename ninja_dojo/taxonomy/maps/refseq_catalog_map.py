@@ -10,21 +10,21 @@ from ...downloaders import RefseqCatalog
 
 
 class RefseqCatalogMap(Pickleable):
-    def __init__(self, _downloader=RefseqCatalog()):
-        self._downloader = _downloader
+    def __init__(self, _downloaders=(RefseqCatalog())):
+        self._downloaders = _downloaders
         super().__init__(SETTINGS, LOGGER)
 
     @download
     def _parse(self):
         self.taxid2refseq_accession = defaultdict(int)
-        with open(os.path.join(self._downloader.path, 'refseq_catalog.csv')) as inf:
+        with open(os.path.join(self._downloaders[0].path, 'refseq_catalog.csv')) as inf:
             reader = csv.reader(inf)
             next(reader)
             for row in reader:
                 self.taxid2refseq_accession[row[1][:row[1].find('.')]] = row[0]
 
     def parse_df(self):
-        df = pd.read_csv(os.path.join(self._downloader.path, 'refseq_catalog.csv'), sep=',')
+        df = pd.read_csv(os.path.join(self._downloaders[0].path, 'refseq_catalog.csv'), sep=',')
         return df
 
     # def __getstate__(self):

@@ -26,9 +26,9 @@ from ..downloaders import NCBITaxdmp
 
 
 class NCBITree(Pickleable):
-    def __init__(self, mp_ranks=None, _downloader=NCBITaxdmp()):
+    def __init__(self, mp_ranks=None, _downloaders=(NCBITaxdmp())):
         # Private variables (should be set in settings)
-        self._downloader = _downloader
+        self._downloaders = _downloaders
         if mp_ranks is None:
             self.mp_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
                      ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__')))
@@ -42,7 +42,7 @@ class NCBITree(Pickleable):
         self.tree = nx.DiGraph()
         self.name2taxon_id = defaultdict(int)
         self.taxon_id2name = defaultdict(str)
-        ncbi_taxdmp_dir = self._downloader.path
+        ncbi_taxdmp_dir = self._downloaders[0].path
         # csv.field_size_limit(sys.maxsize)
 
         with open(os.path.join(ncbi_taxdmp_dir, 'names.dmp'), 'r') as handle:
