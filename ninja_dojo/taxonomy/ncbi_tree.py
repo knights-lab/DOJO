@@ -76,7 +76,8 @@ class NCBITree(Pickleable):
         for node in self.tree.nodes_iter():
             rank = self.tree.node[node]['rank']
             name = self.taxon_id2name[node]
-            yield node, rank, name, nx.predecessor(self.tree, node)
+            parents = nx.i
+            yield node, rank, name, next(iter(nx.immediate_dominators(self.tree, node).items()))[0]
 
 
     def get_taxon_id_lineage_with_taxon_id(self, taxon_id):
