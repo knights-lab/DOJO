@@ -71,6 +71,14 @@ class NCBITree(Pickleable):
         self.tree.add_edges_from(edges)
         nx.set_node_attributes(self.tree, 'rank', nodes)
 
+    def dfs_traversal(self):
+        # ncbi_tid, rank, name, parent_ncbi_tid
+        for edge in nx.dfs_edges(self.tree):
+            rank = self.tree.node[edge[1]]['rank']
+            name = self.taxon_id2name[edge[1]]
+            yield edge[1], rank, name, edge[0]
+
+
     def get_taxon_id_lineage_with_taxon_id(self, taxon_id):
         if taxon_id in self.tree:
             for i in nx.dfs_preorder_nodes(self.tree, taxon_id):
