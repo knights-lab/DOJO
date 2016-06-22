@@ -9,14 +9,17 @@ from ..taxonomy.maps import RefseqAssemblyMap, RefseqCatalogMap
 
 class RefSeqDatabase:
     def __init__(self):
-
+        pass
 
     def _parse(self):
         db_path = os.path.join(SETTINGS.get_path('db_dir'), 'refseq.db')
-        conn = sqlite3.connect(db_path)
-        c = conn.cursor()
-        c.execute('''CREATE TABLE tree (ncbi_tid integer, name text, parent_ncbi_tid integer, assembly_version text, refseq_version text, ftp text)''')
-        tree = NCBITree()
-        assembly_map = RefseqAssemblyMap()
-        refseq_catalog_map = RefseqCatalogMap()
-        for tree in 
+        with sqlite3.connect(db_path) as conn:
+            c = conn.cursor()
+            c.execute('CREATE TABLE IF NOT EXISTS tree (ncbi_tid INTEGER, name TEXT, parent_ncbi_tid INTEGER, assembly_version TEXT, refseq_version TEXT, ftp TEXT)')
+            tree = NCBITree()
+            assembly_map = RefseqAssemblyMap()
+            refseq_catalog_map = RefseqCatalogMap()
+            for ncbi_tid, rank, name, parent_ncbi_tid in tree.dfs_traversal():
+                assembly_version = assembly_map.ncbi_tid2refseq_assembly_accession[ncbi_tid]
+                refseq_version = refseq_catalog_map.ncbi_tid2refseq_accession[ncbi_tid]
+                c.execute('INSERT INTO tree VALUES (?,?,?,?,?,?)', (ncbi_tid, name, parent_ncbi_tid, assembly_version, refseq_version, ''))

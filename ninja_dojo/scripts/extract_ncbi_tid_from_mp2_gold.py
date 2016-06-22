@@ -25,7 +25,7 @@ def extract_ncbi_tid(path, verbose):
                     if len(header_arr) > 3:
                         refseq_acc = header_arr[3]
                         acc = refseq_acc[:refseq_acc.find('.')]
-                        tid = rf.taxid2refseq_accession[acc]
+                        tid = rf.refseq_accession2ncbi_tid[acc]
                         if not tid == 0:
                             outf.write('@ncbi_tid|%s|%s\n' % (tid, header))
                             outf.write(seq + '\n')

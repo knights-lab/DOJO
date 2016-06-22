@@ -7,4 +7,5 @@ LOGGER = Logger(logfp=SETTINGS.settings['log'], log_persist=SETTINGS.settings['l
 
 __all__ = ['config',
            'downloaders',
-           'taxonomy']
+           'taxonomy',
+           'database']

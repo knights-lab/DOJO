@@ -3,22 +3,24 @@ import pandas as pd
 from collections import defaultdict
 
 from ninja_trebuchet.factory import Pickleable, download
+from ninja_trebuchet.utils import reverse_dict
 
 from ... import SETTINGS, LOGGER
 from ...downloaders import RefseqAssemblySummary
 
 
 class RefseqAssemblyMap(Pickleable):
-    def __init__(self, _downloaders=(RefseqAssemblySummary())):
+    def __init__(self, _downloaders=(RefseqAssemblySummary(),)):
         self._downloaders = _downloaders
         super().__init__(SETTINGS, LOGGER)
 
     @download
     def _parse(self):
         self.df = self.parse_df()
-        self.taxid2refseq_assembly_accession = defaultdict(int)
+        self.refseq_assembly_accession2ncbi_tid = defaultdict(int)
         for ind, ser in self.df.iterrows():
-            self.taxid2refseq_assembly_accession[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
+            self.refseq_assembly_accession2ncbi_tid[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
+        self.ncbi_tid2refseq_assembly_accession = defaultdict(reverse_dict(self.refseq_assembly_accession2ncbi_tid), default_factory=str)
 
     def parse_df(self):
         df = pd.read_csv(os.path.join(self._downloaders[0].path, 'assembly_summary_refseq.txt'),
@@ -31,9 +33,11 @@ class RefseqAssemblyMap(Pickleable):
     def __getstate__(self):
         d = dict(self.__dict__)
         del d['df']
+        del d['ncbi_tid2refseq_assembly_accession']
         return d
 
     def __setstate__(self, d):
+        d['ncbi_tid2refseq_assembly_accession'] = defaultdict(reverse_dict(d['refseq_assembly_accession2ncbi_tid']), default_factory=str)
         # TODO add try/except
         self.__dict__.update(d)
         self.df = self.parse_df()
