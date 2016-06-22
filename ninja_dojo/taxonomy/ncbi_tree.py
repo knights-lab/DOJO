@@ -26,7 +26,7 @@ from ..downloaders import NCBITaxdmp
 
 
 class NCBITree(Pickleable):
-    def __init__(self, mp_ranks=None, _downloaders=(NCBITaxdmp())):
+    def __init__(self, mp_ranks=None, _downloaders=(NCBITaxdmp(),)):
         # Private variables (should be set in settings)
         self._downloaders = _downloaders
         if mp_ranks is None:
@@ -73,10 +73,10 @@ class NCBITree(Pickleable):
 
     def dfs_traversal(self):
         # ncbi_tid, rank, name, parent_ncbi_tid
-        for edge in nx.dfs_edges(self.tree):
-            rank = self.tree.node[edge[1]]['rank']
-            name = self.taxon_id2name[edge[1]]
-            yield edge[1], rank, name, edge[0]
+        for node in self.tree.nodes_iter():
+            rank = self.tree.node[node]['rank']
+            name = self.taxon_id2name[node]
+            yield node, rank, name, nx.predecessor(self.tree, node)
 
 
     def get_taxon_id_lineage_with_taxon_id(self, taxon_id):

@@ -20,7 +20,7 @@ class RefseqAssemblyMap(Pickleable):
         self.refseq_assembly_accession2ncbi_tid = defaultdict(int)
         for ind, ser in self.df.iterrows():
             self.refseq_assembly_accession2ncbi_tid[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
-        self.ncbi_tid2refseq_assembly_accession = defaultdict(reverse_dict(self.refseq_assembly_accession2ncbi_tid), default_factory=str)
+        self.ncbi_tid2refseq_assembly_accession = defaultdict(str, reverse_dict(self.refseq_assembly_accession2ncbi_tid))
 
     def parse_df(self):
         df = pd.read_csv(os.path.join(self._downloaders[0].path, 'assembly_summary_refseq.txt'),
@@ -37,7 +37,7 @@ class RefseqAssemblyMap(Pickleable):
         return d
 
     def __setstate__(self, d):
-        d['ncbi_tid2refseq_assembly_accession'] = defaultdict(reverse_dict(d['refseq_assembly_accession2ncbi_tid']), default_factory=str)
+        d['ncbi_tid2refseq_assembly_accession'] = defaultdict(str, reverse_dict(d['refseq_assembly_accession2ncbi_tid']))
         # TODO add try/except
         self.__dict__.update(d)
         self.df = self.parse_df()
