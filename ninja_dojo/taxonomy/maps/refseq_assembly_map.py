@@ -18,8 +18,10 @@ class RefseqAssemblyMap(Pickleable):
     def _parse(self):
         self.df = self.parse_df()
         self.refseq_assembly_accession2ncbi_tid = defaultdict(int)
+        self.ncbi_tid2ftp_path = defaultdict(str)
         for ind, ser in self.df.iterrows():
             self.refseq_assembly_accession2ncbi_tid[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
+            self.ncbi_tid2ftp_path[ser['taxid']] = ser['ftp_path']
         self.ncbi_tid2refseq_assembly_accession = defaultdict(str, reverse_dict(self.refseq_assembly_accession2ncbi_tid))
 
     def parse_df(self):

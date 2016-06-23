@@ -73,10 +73,14 @@ class NCBITree(Pickleable):
 
     def dfs_traversal(self):
         # ncbi_tid, rank, name, parent_ncbi_tid
-        for node in self.tree.nodes_iter():
-            rank = self.tree.node[node]['rank']
-            name = self.taxon_id2name[node]
-            yield node, rank, name, next(iter(nx.immediate_dominators(self.tree, node).items()))[0]
+        with open(os.path.join(self._downloaders[0].path, 'nodes.dmp'), 'r') as inf:
+            csv_handle = csv.reader(inf, delimiter='\t')
+            for cols in csv_handle:
+                node = int(cols[0])
+                parent = int(cols[2])
+                rank = self.tree.node[node]['rank']
+                name = self.taxon_id2name[node]
+                yield node, rank, name, parent
 
 
     def get_taxon_id_lineage_with_taxon_id(self, taxon_id):

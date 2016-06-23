@@ -22,7 +22,7 @@ class RefseqCatalogMap(Pickleable):
             reader = csv.reader(inf)
             next(reader)
             for row in reader:
-                self.refseq_accession2ncbi_tid[row[1][:row[1].find('.')]] = row[0]
+                self.refseq_accession2ncbi_tid[row[1][:row[1].find('.')]] = int(row[0])
         self.ncbi_tid2refseq_accession = defaultdict(str, reverse_dict(self.refseq_accession2ncbi_tid))
 
     def parse_df(self):

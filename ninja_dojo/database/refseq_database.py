@@ -1,4 +1,3 @@
-from ninja_trebuchet.factory import download
 import sqlite3
 import os
 
@@ -11,7 +10,7 @@ class RefSeqDatabase:
     def __init__(self):
         pass
 
-    def _parse(self):
+    def _create(self):
         db_path = os.path.join(SETTINGS.get_path('db_dir'), 'refseq.db')
         with sqlite3.connect(db_path) as conn:
             c = conn.cursor()
@@ -22,5 +21,5 @@ class RefSeqDatabase:
             for ncbi_tid, rank, name, parent_ncbi_tid in tree.dfs_traversal():
                 assembly_version = assembly_map.ncbi_tid2refseq_assembly_accession[ncbi_tid]
                 refseq_version = refseq_catalog_map.ncbi_tid2refseq_accession[ncbi_tid]
-                print((ncbi_tid, name, rank, parent_ncbi_tid, assembly_version, refseq_version, ''))
-                c.execute('INSERT INTO tree VALUES (?,?,?,?,?,?,?)', (ncbi_tid, name, rank, parent_ncbi_tid, assembly_version, refseq_version, ''))
+                ftp_path = assembly_map.ncbi_tid2ftp_path[ncbi_tid]
+                c.execute('INSERT INTO tree VALUES (?,?,?,?,?,?,?)', (ncbi_tid, name, rank, parent_ncbi_tid, assembly_version, refseq_version, ftp_path))
