@@ -27,4 +27,4 @@ class RefSeqDatabase:
                 c.execute('INSERT INTO tree VALUES (?,?,?,?,?,?,?)', (ncbi_tid, name, rank, parent_ncbi_tid, assembly_version, refseq_version, ftp_path))
 
     def get_blaze(self):
-        return blaze.data('sqlite:////%s' % self.path)
+        return blaze.data('sqlite:///%s' % self.path)
