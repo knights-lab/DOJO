@@ -41,9 +41,9 @@ def download_refseq_all(verbose):
 
     ftp_view = data.tree[data.tree.ftp != '' and data.tree.refseq_version != '']
     ftp_links = yield_ftp_links(ftp_view, specified_kingdoms, tree)
-    ftp_test = [next(ftp_links) for _ in range(10)]
+    # ftp_test = [next(ftp_links) for _ in range(10)]
 
-    pool.map(download_ftp_link, ftp_test)
+    pool.map(download_ftp_link, ftp_links)
     print('Done')
 
     # c = Counter(kingdoms)
