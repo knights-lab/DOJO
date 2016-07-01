@@ -16,15 +16,36 @@ class RefSeqDatabase:
     def _create(self):
         with sqlite3.connect(self.path) as conn:
             c = conn.cursor()
-            c.execute('CREATE TABLE IF NOT EXISTS tree (ncbi_tid INTEGER, name TEXT, rank TEXT, parent_ncbi_tid INTEGER, assembly_version TEXT, refseq_version TEXT, ftp TEXT)')
+            c.execute('CREATE TABLE IF NOT EXISTS taxonomy('
+                          'ncbi_tid INTEGER UNIQUE NOT NULL PRIMARY KEY,'
+                          'name TEXT,'
+                          'rank TEXT,'
+                          'parent_ncbi_tid INTEGER'
+                      ')')
+            c.execute('CREATE TABLE IF NOT EXISTS refseq_version('
+                          'ncbi_tid INTEGER,'
+                          'refseq_version TEXT,'
+                          'gi INTEGER,'
+                          'length INTEGER,'
+                          'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE'
+                      ')')
+            c.execute('CREATE TABLE IF NOT EXISTS assembly_version('
+                          'ncbi_tid INTEGER,'
+                          'assembly_version TEXT,'
+                          'ftp_path TEXT,'
+                          'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE'
+                      ')')
             tree = NCBITree()
             assembly_map = RefseqAssemblyMap()
             refseq_catalog_map = RefseqCatalogMap()
             for ncbi_tid, rank, name, parent_ncbi_tid in tree.dfs_traversal():
-                assembly_version = assembly_map.ncbi_tid2refseq_assembly_accession[ncbi_tid]
-                refseq_version = refseq_catalog_map.ncbi_tid2refseq_accession[ncbi_tid]
-                ftp_path = assembly_map.ncbi_tid2ftp_path[ncbi_tid]
-                c.execute('INSERT INTO tree VALUES (?,?,?,?,?,?,?)', (ncbi_tid, name, rank, parent_ncbi_tid, assembly_version, refseq_version, ftp_path))
+                c.execute('INSERT INTO taxonomy VALUES (?,?,?,?)', (ncbi_tid, name, rank, parent_ncbi_tid,))
+            for row in refseq_catalog_map.parse_df().iterrows():
+                c.execute('INSERT INTO refseq_version VALUES (?,?)',
+                          (row['ncbi_tid'], row['accession.version'], row['gi'], row['length'],))
+            for row in assembly_map.df.iterrows():
+                c.execute('INSERT INTO assembly_version VALUES (?,?,?)',
+                          (row['taxid'], row['assembly_accession'], row['ftp_path'],))
 
     def get_blaze(self):
         return blaze.data('sqlite:///%s' % self.path)

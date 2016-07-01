@@ -2,6 +2,12 @@
 import click
 import urllib.request
 import re
+import os
+
+from ninja_trebuchet.utils import line_bytestream_gzip
+from ninja_trebuchet.parsers import FASTA
+
+from ninja_dojo.database.refseq_database import RefSeqDatabase
 
 #
 # #!/usr/bin/env bash
@@ -20,18 +26,50 @@ import re
 # #project/flatiron/ben/bin/blast/dustmasker -in ncbi.fna -infmt fasta -outfmt fasta -out ncbi.masked.fna
 
 
+def binary_fasta(fh, blaze):
+    """
+    :return: tuples of (title, seq)
+    """
+    title = b''
+    data = b''
+    for line in fh:
+        if line[:1] == b'>':
+            if title:
+                yield title.strip(), data
+            line_split = line.split(b'|')
+            if line_split[3][:2] in {b'NC', b'AC'}:
+                print(line_split)
+                title = line[1:]
+                data = b''
+            else:
+                title = b''
+        elif title:
+            data += line.strip()
+    if title:
+        yield title.strip(), data
+
+
 @click.command()
 # @click.argument('path', type=click.Path(exists=True))
 def download_refseq():
-    print('Hello, World!')
+    url = 'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea'
     # Request the listing of the directory
-    req = urllib.request.Request('ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea')
+    req = urllib.request.Request(url)
     string = urllib.request.urlopen(req).read().decode('utf-8')
 
     # Grab the filename ending with catalog.gz
     pattern_cat = re.compile('[a-zA-Z0-9.-]*.genomic.fna.gz')
     filelist = pattern_cat.findall(string)
-    print(filelist)
+
+    db = RefSeqDatabase()
+    blaze = db.get_blaze()
+
+    for file in filelist:
+        req_file = urllib.request.Request('%s/%s' % (url, file))
+        with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
+            fasta_fh = line_bytestream_gzip(ftp_stream)
+            for title, seq in binary_fasta(fasta_fh, blaze):
+                print(title, seq)
 
 
 if __name__ == '__main__':

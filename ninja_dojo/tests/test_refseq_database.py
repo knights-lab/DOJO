@@ -4,8 +4,8 @@ from nose.tools import assert_equals
 from ninja_dojo.database import RefSeqDatabase
 
 
-class RefseqCatalogDatabaseTest(unittest.TestCase):
+class RefseqSQLITEDatabaseTest(unittest.TestCase):
     def test(self):
         rfd = RefSeqDatabase()
-        rfd._parse()
+        rfd._create()
         assert_equals(None, None)
