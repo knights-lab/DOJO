@@ -16,13 +16,14 @@ class RefseqAssemblyMap(Pickleable):
 
     @download
     def _parse(self):
-        self.df = self.parse_df()
+        df = self.parse_df()
         self.refseq_assembly_accession2ncbi_tid = defaultdict(int)
-        self.ncbi_tid2ftp_path = defaultdict(str)
-        for ind, ser in self.df.iterrows():
+        # self.ncbi_tid2ftp_path = defaultdict(str)
+        for ind, ser in df.iterrows():
             self.refseq_assembly_accession2ncbi_tid[ser['assembly_accession'][:ser['assembly_accession'].find('.')]] = ser['taxid']
-            self.ncbi_tid2ftp_path[ser['taxid']] = ser['ftp_path']
-        self.ncbi_tid2refseq_assembly_accession = defaultdict(str, reverse_dict(self.refseq_assembly_accession2ncbi_tid))
+        #     self.ncbi_tid2ftp_path[ser['taxid']] = ser['ftp_path']
+        # This is a one to many mapping
+        # self.ncbi_tid2refseq_assembly_accession = defaultdict(str, reverse_dict(self.refseq_assembly_accession2ncbi_tid))
 
     def parse_df(self):
         df = pd.read_csv(os.path.join(self._downloaders[0].path, 'assembly_summary_refseq.txt'),
@@ -32,15 +33,14 @@ class RefseqAssemblyMap(Pickleable):
         df.columns = columns
         return df
 
-    def __getstate__(self):
-        d = dict(self.__dict__)
-        del d['df']
-        del d['ncbi_tid2refseq_assembly_accession']
-        return d
-
-    def __setstate__(self, d):
-        d['ncbi_tid2refseq_assembly_accession'] = defaultdict(str, reverse_dict(d['refseq_assembly_accession2ncbi_tid']))
-        # TODO add try/except
-        self.__dict__.update(d)
-        self.df = self.parse_df()
+    # There is no more need for this
+    # def __getstate__(self):
+    #     d = dict(self.__dict__)
+    #     del d['df']
+    #     return d
+    #
+    # def __setstate__(self, d):
+    #     # TODO add try/except
+    #     self.__dict__.update(d)
+    #     self.df = self.parse_df()
 

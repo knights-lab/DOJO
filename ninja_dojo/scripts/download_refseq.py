@@ -5,9 +5,9 @@ import re
 import os
 
 from ninja_trebuchet.utils import line_bytestream_gzip
-from ninja_trebuchet.parsers import FASTA
 
-from ninja_dojo.database.refseq_database import RefSeqDatabase
+from ninja_dojo.taxonomy import NCBITree
+from ninja_dojo.database import RefSeqDatabase
 
 #
 # #!/usr/bin/env bash
@@ -26,7 +26,7 @@ from ninja_dojo.database.refseq_database import RefSeqDatabase
 # #project/flatiron/ben/bin/blast/dustmasker -in ncbi.fna -infmt fasta -outfmt fasta -out ncbi.masked.fna
 
 
-def binary_fasta(fh, blaze):
+def binary_fasta(fh):
     """
     :return: tuples of (title, seq)
     """
@@ -38,7 +38,6 @@ def binary_fasta(fh, blaze):
                 yield title.strip(), data
             line_split = line.split(b'|')
             if line_split[3][:2] in {b'NC', b'AC'}:
-                print(line_split)
                 title = line[1:]
                 data = b''
             else:
@@ -52,7 +51,12 @@ def binary_fasta(fh, blaze):
 @click.command()
 # @click.argument('path', type=click.Path(exists=True))
 def download_refseq():
-    url = 'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea'
+    urls = ['ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea',
+            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/bacteria',
+            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/fungi',
+            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/viral',
+            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa']
+    url = urls[0]
     # Request the listing of the directory
     req = urllib.request.Request(url)
     string = urllib.request.urlopen(req).read().decode('utf-8')
@@ -68,7 +72,7 @@ def download_refseq():
         req_file = urllib.request.Request('%s/%s' % (url, file))
         with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
             fasta_fh = line_bytestream_gzip(ftp_stream)
-            for title, seq in binary_fasta(fasta_fh, blaze):
+            for title, seq in binary_fasta(fasta_fh):
                 print(title, seq)
 
 

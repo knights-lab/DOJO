@@ -23,7 +23,7 @@ class RefseqCatalogMap(Pickleable):
             next(reader)
             for row in reader:
                 self.refseq_accession2ncbi_tid[row[1][:row[1].find('.')]] = int(row[0])
-        self.ncbi_tid2refseq_accession = defaultdict(str, reverse_dict(self.refseq_accession2ncbi_tid))
+        # self.ncbi_tid2refseq_accession = defaultdict(str, reverse_dict(self.refseq_accession2ncbi_tid))
 
     def parse_df(self):
         df = pd.read_csv(os.path.join(self._downloaders[0].path, 'refseq_catalog.csv'), sep=',')
@@ -31,10 +31,10 @@ class RefseqCatalogMap(Pickleable):
 
     def __getstate__(self):
         d = dict(self.__dict__)
-        del d['ncbi_tid2refseq_accession']
+        # del d['ncbi_tid2refseq_accession']
         return d
 
     def __setstate__(self, d):
         # TODO add try/except
-        d['ncbi_tid2refseq_accession'] = defaultdict(str, reverse_dict(d['refseq_accession2ncbi_tid']))
+        # d['ncbi_tid2refseq_accession'] = defaultdict(str, reverse_dict(d['refseq_accession2ncbi_tid']))
         self.__dict__.update(d)
