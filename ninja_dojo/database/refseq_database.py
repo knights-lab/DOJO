@@ -43,7 +43,7 @@ class RefSeqDatabase:
             for index, row in refseq_catalog_map.parse_df().iterrows():
                 c.execute('INSERT INTO refseq_version VALUES (?,?,?,?)',
                           (row['ncbi_tid'], row['accession.version'], row['gi'], row['length'],))
-            for index, row in assembly_map.df.iterrows():
+            for index, row in assembly_map.parse_df().iterrows():
                 c.execute('INSERT INTO assembly_version VALUES (?,?,?)',
                           (row['taxid'], row['assembly_accession'], row['ftp_path'],))
 
