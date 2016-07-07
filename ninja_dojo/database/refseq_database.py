@@ -40,15 +40,12 @@ class RefSeqDatabase:
             refseq_catalog_map = RefseqCatalogMap()
             for ncbi_tid, rank, name, parent_ncbi_tid in tree.dfs_traversal():
                 c.execute('INSERT INTO taxonomy VALUES (?,?,?,?)', (ncbi_tid, name, rank, parent_ncbi_tid,))
-            conn.commit()
             for index, row in refseq_catalog_map.parse_df().iterrows():
                 c.execute('INSERT INTO refseq_version VALUES (?,?,?,?)',
                           (row['ncbi_tid'], row['accession.version'], row['gi'], row['length'],))
-            conn.commit()
             for index, row in assembly_map.df.iterrows():
                 c.execute('INSERT INTO assembly_version VALUES (?,?,?)',
                           (row['taxid'], row['assembly_accession'], row['ftp_path'],))
-            conn.comit()
 
     def get_blaze(self):
         return blaze.data('sqlite:///%s' % self.path)
