@@ -2,6 +2,7 @@ import sqlite3
 import os
 import blaze
 import json
+from collections import defaultdict
 
 from .. import SETTINGS, LOGGER
 from ..taxonomy import NCBITree
@@ -9,11 +10,10 @@ from ..taxonomy.maps import RefseqAssemblyMap, RefseqCatalogMap
 
 
 class RefSeqDatabase:
-    def __init__(self, _path=os.path.join(SETTINGS.get_path('db_dir'), 'refseq.db'), _ftp_prefix = SETTINGS.settings['refseq_ftp_prefix']):
-        self.path = _path
-        self.ftp_prefix = _ftp_prefix
+    def __init__(self, _db_dir=SETTINGS.get_path('db_dir'), _ftp_prefix=SETTINGS.settings['refseq_ftp_prefix']):
+        self.path = os.path.join(_db_dir, 'refseq.db')
         if not os.path.exists(self.path):
-            self._create()
+            self._create(_db_dir, _ftp_prefix)
         # suffix
         self.refseq_prefix = {}
         self.assembly_prefix = {}
@@ -28,13 +28,14 @@ class RefSeqDatabase:
     def get_assembly_row(self, ncbi_tid):
         pass
 
-    def _create(self):
-        with sqlite3.connect(self.path) as conn:
+    @staticmethod
+    def _create(db_dir, ftp_prefix):
+        with sqlite3.connect(os.path.join(db_dir, 'refseq.db')) as conn:
             c = conn.cursor()
             c.execute('CREATE TABLE IF NOT EXISTS taxonomy('
                       'ncbi_tid INTEGER UNIQUE NOT NULL PRIMARY KEY,'
                       'name TEXT,'
-                      'rank TEXT,'
+                      'rank INTEGER,'
                       'parent_ncbi_tid INTEGER'
                       ')')
             c.execute('CREATE TABLE IF NOT EXISTS refseq('
@@ -61,8 +62,15 @@ class RefSeqDatabase:
             refseq_prefix_counter = 0
             refseq_prefix_mapper = {}
 
+            # rank mapper
+            ncbi_rank_mapper = defaultdict(
+                lambda: -1, zip(
+                    ('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies', 'strain'),
+                    range(9))
+            )
+
             for ncbi_tid, rank, name, parent_ncbi_tid in tree.dfs_traversal():
-                c.execute('INSERT INTO taxonomy VALUES (?,?,?,?)', (ncbi_tid, name, rank, parent_ncbi_tid,))
+                c.execute('INSERT INTO taxonomy VALUES (?,?,?,?)', (ncbi_tid, name, ncbi_rank_mapper[rank], parent_ncbi_tid,))
             for index, row in refseq_catalog_map.parse_df().iterrows():
                 refseq_accession_version = row['accession.version']
                 refseq_prefix_accession, refseq_version = refseq_accession_version.split('.')
@@ -71,18 +79,20 @@ class RefSeqDatabase:
                     refseq_prefix_mapper[refseq_prefix] = refseq_prefix_counter
                     refseq_prefix_counter += 1
                 c.execute('INSERT INTO refseq VALUES (?,?,?,?,?,?)',
-                          (row['ncbi_tid'], refseq_prefix, refseq_accession, refseq_version, row['gi'], row['length'],))
+                          (row['ncbi_tid'], refseq_prefix_mapper[refseq_prefix], refseq_accession, int(refseq_version), row['gi'], row['length'],))
             for index, row in assembly_map.parse_df().iterrows():
                 assembly_accession, assembly_version = row['assembly_accession'].split('.')
                 ftp_suffix = row['ftp_path'].split('_')[-1]
                 c.execute('INSERT INTO assembly VALUES (?,?,?,?)',
-                          (row['taxid'], assembly_accession, assembly_version, ftp_suffix,))
+                          (row['taxid'], assembly_accession, int(assembly_version), ftp_suffix,))
             c.execute('CREATE INDEX parent_ncbi_tid_index on taxonomy(parent_ncbi_tid)')
             c.execute('CREATE INDEX refseq_index on refseq(refseq_prefix, refseq_accession, refseq_version)')
             c.execute('CREATE INDEX gi_index on refseq(gi)')
             c.execute('CREATE INDEX assembly_index on assembly(assembly_accession, assembly_version)')
-            with open('refseq_prefix.json', 'w') as outfile:
-                json.dump(refseq_prefix_mapper, outfile)
+            metadata = dict(zip(('ncbi_rank_mapper', 'refseq_prefix_mapper', 'ftp_prefix'),
+                                (ncbi_rank_mapper, refseq_prefix_mapper, ftp_prefix)))
+            with open(os.path.join(db_dir, 'metadata.json'), 'w') as outfile:
+                json.dump(metadata, outfile)
 
     def get_ncbi_tid(self, refseq_accession_version):
         return self.blaze.refseq_version[self.blaze.refseq_version.refseq_version == refseq_accession_version]
