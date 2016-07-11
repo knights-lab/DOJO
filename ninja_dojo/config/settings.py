@@ -17,6 +17,7 @@ def ninja_dojo_settings():
         'refseq_summary_dir': ['data', 'refseq_summary'],
         'refseq_catalog_urls': ['ftp://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/'],
         'refseq_catalog_dir': ['data', 'refseq_catalog'],
+        'refseq_ftp_prefix': 'ftp://ftp.ncbi.nlm.nih.gov/genomes/all/',
         'db_dir': ['db']
     }
 
