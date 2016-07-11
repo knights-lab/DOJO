@@ -12,6 +12,7 @@ class RefSeqDatabase:
         self.path = _path
         if not os.path.exists(self.path):
             self._create()
+        self.blaze = blaze.data('sqlite:///%s' % self.path)
 
     def _create(self):
         with sqlite3.connect(self.path) as conn:
@@ -47,5 +48,5 @@ class RefSeqDatabase:
                 c.execute('INSERT INTO assembly_version VALUES (?,?,?)',
                           (row['taxid'], row['assembly_accession'], row['ftp_path'],))
 
-    def get_blaze(self):
-        return blaze.data('sqlite:///%s' % self.path)
+    def get_ncbi_tid(self, refseq_accession_version):
+        return self.blaze.refseq_version[self.blaze.refseq_version.refseq_version == refseq_accession_version]

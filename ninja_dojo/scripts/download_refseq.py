@@ -26,7 +26,7 @@ from ninja_dojo.database import RefSeqDatabase
 # #project/flatiron/ben/bin/blast/dustmasker -in ncbi.fna -infmt fasta -outfmt fasta -out ncbi.masked.fna
 
 
-def binary_fasta(fh):
+def binary_fasta(fh, db):
     """
     :return: tuples of (title, seq)
     """
@@ -38,6 +38,7 @@ def binary_fasta(fh):
                 yield title.strip(), data
             line_split = line.split(b'|')
             if line_split[3][:2] in {b'NC', b'AC'}:
+                refseq_query = db.get_ncbi_tid(line_split[3])
                 title = line[1:]
                 data = b''
             else:
@@ -66,13 +67,12 @@ def download_refseq():
     filelist = pattern_cat.findall(string)
 
     db = RefSeqDatabase()
-    blaze = db.get_blaze()
 
     for file in filelist:
         req_file = urllib.request.Request('%s/%s' % (url, file))
         with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
             fasta_fh = line_bytestream_gzip(ftp_stream)
-            for title, seq in binary_fasta(fasta_fh):
+            for title, seq in binary_fasta(fasta_fh, db):
                 print(title, seq)
 
 
