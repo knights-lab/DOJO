@@ -2,7 +2,6 @@ import sqlite3
 import os
 import blaze
 import json
-from collections import defaultdict
 
 from .. import SETTINGS, LOGGER
 from ..taxonomy import NCBITree
@@ -28,8 +27,8 @@ class RefSeqDatabase:
     def get_assembly_row(self, ncbi_tid):
         pass
 
-    @staticmethod
-    def _create(db_dir, ftp_prefix):
+    @classmethod
+    def _create(cls, db_dir, ftp_prefix):
         with sqlite3.connect(os.path.join(db_dir, 'refseq.db')) as conn:
             c = conn.cursor()
             c.execute('CREATE TABLE IF NOT EXISTS taxonomy('
@@ -63,13 +62,14 @@ class RefSeqDatabase:
             refseq_prefix_mapper = {}
 
             # rank mapper
-            ncbi_rank_mapper = defaultdict(
-                lambda: -1, zip(
-                    ('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies', 'strain'),
-                    range(9))
-            )
+            ncbi_rank_mapper = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
+                    range(7)))
+            ncbi_rank_counter = -1
 
             for ncbi_tid, rank, name, parent_ncbi_tid in tree.dfs_traversal():
+                if rank not in ncbi_rank_mapper:
+                    ncbi_rank_mapper[rank] = ncbi_rank_counter
+                    ncbi_rank_counter -= 1
                 c.execute('INSERT INTO taxonomy VALUES (?,?,?,?)', (ncbi_tid, name, ncbi_rank_mapper[rank], parent_ncbi_tid,))
             for index, row in refseq_catalog_map.parse_df().iterrows():
                 refseq_accession_version = row['accession.version']

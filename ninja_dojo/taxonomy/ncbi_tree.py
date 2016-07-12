@@ -30,8 +30,8 @@ class NCBITree(Pickleable):
         # Private variables (should be set in settings)
         self._downloaders = _downloaders
         if mp_ranks is None:
-            self.mp_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies', 'strain'),
-                     ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__', 'u__', 't__')))
+            self.mp_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
+                     ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__')))
         else:
             self.mp_ranks = mp_ranks
         super().__init__(SETTINGS, LOGGER)
@@ -79,9 +79,6 @@ class NCBITree(Pickleable):
                 node = int(cols[0])
                 parent = int(cols[2])
                 rank = self.tree.node[node]['rank']
-                if rank == 'no rank':
-                    if self.tree.node[parent]['rank'] in {'species', 'subspecies'}:
-                        rank = 'strain'
                 name = self.taxon_id2name[node]
                 yield node, rank, name, parent
 
@@ -123,7 +120,7 @@ class NCBITree(Pickleable):
             return None, None
         return self.get_rank_with_taxon_id(self.name2taxon_id[name], rank)
 
-    def get_lineage(self, taxon_id, ranks={'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'}):
+    def get_lineage(self, taxon_id, ranks={'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'}):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
         name_lineage = []
         for x in taxon_id_lineage:
@@ -133,7 +130,7 @@ class NCBITree(Pickleable):
                 name_lineage.append((name, x, rank))
         return name_lineage
 
-    def get_lineage_depth(self, taxon_id, depth, ranks=('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain')):
+    def get_lineage_depth(self, taxon_id, depth, ranks=('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species')):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
         ranks = set(ranks[depth:])
         lineage = []
