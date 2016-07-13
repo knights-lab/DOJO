@@ -13,19 +13,61 @@ class RefSeqDatabase:
         self.path = os.path.join(_db_dir, 'refseq.db')
         if not os.path.exists(self.path):
             self._create(_db_dir, _ftp_prefix)
-        # suffix
-        self.refseq_prefix = {}
-        self.assembly_prefix = {}
-        self.blaze = blaze.data('sqlite:///%s' % self.path)
 
-    def get_ftp_link(self, ncbi_tid):
-        ftp_suffix = 's'
-        assembly_accession_version = ncbi_tid
-        for row in self.get_assembly_row(ncbi_tid):
-            yield '%s%s_%s' % (self.ftp_prefix, assembly_accession_version, ftp_suffix)
+        try:
+            with open(os.path.join(_db_dir, 'metadata.json')) as data:
+                metadata = json.load(data)
+        except FileNotFoundError as e:
+            raise e
+
+        self.ftp_prefix = metadata['ftp_prefix']
+        self.ncbi_rank_mapper = metadata['ncbi_rank_mapper']
+        self.refseq_prefix_mapper = metadata['refseq_prefix_mapper']
+
+        self.conn = sqlite3.connect(os.path.join(_db_dir, 'refseq.db'))
+        self.conn.execute('pragma foreign_keys = on')
+        self.conn.commit()
+
+    def query(self, query):
+        cur = self.conn.cursor()
+        cur.execute(query)
+        return cur
+
+    def yield_ftp_links(self, ncbi_tid):
+        cur = self.conn.cursor()
+
+        # ncbi_tid, assembly_accession, assembly_version, ftp_suffix
+        cur.execute('SELECT * FROM assembly WHERE ncbi_tid = ?', (ncbi_tid,))
+
+        for row in cur:
+            yield '%s%s_%s' % (self.ftp_prefix, '%s.%d' % (row[1], row[2]), row[3])
 
     def get_assembly_row(self, ncbi_tid):
-        pass
+        self.cur.execute('SELECT ? ?', )
+
+    def get_ncbi_tid_from_refseq_accession_version(self, refseq_accession_version):
+        cur = self.conn.cursor()
+        try:
+            refseq_prefix = self.refseq_prefix_mapper[refseq_accession_version[:2]]
+        except KeyError as e:
+            raise e
+
+        refseq_accession, refseq_version = refseq_accession_version[3:].split('.')
+
+        # ncbi_tid, refseq_prefix, refseq_accession, refseq_version, gi, length
+        cur.execute('SELECT ncbi_tid FROM refseq WHERE refseq_prefix = ? AND refseq_accession = ? AND refseq_version = ?',
+                    (refseq_prefix, refseq_accession, int(refseq_version)))
+        return next(cur)[0]
+
+    def get_ncbi_tid_row(self, ncbi_tid):
+        cur = self.conn.cursor()
+
+        # ncbi_tid, name, rank, parent_ncbi_tid
+        cur.execute(
+            'SELECT * FROM taxonomy WHERE ncbi_tid = ?',
+            (ncbi_tid))
+
+        return next(cur)[0]
 
     @classmethod
     def _create(cls, db_dir, ftp_prefix):
@@ -82,7 +124,8 @@ class RefSeqDatabase:
                           (row['ncbi_tid'], refseq_prefix_mapper[refseq_prefix], refseq_accession, int(refseq_version), row['gi'], row['length'],))
             for index, row in assembly_map.parse_df().iterrows():
                 assembly_accession, assembly_version = row['assembly_accession'].split('.')
-                ftp_suffix = row['ftp_path'].split('_')[-1]
+                # remove the underscore and start at the end
+                ftp_suffix = row['ftp_path'][row['ftp_path'].find(row['assembly_accession'])+len(row['assembly_accession'])+1:]
                 c.execute('INSERT INTO assembly VALUES (?,?,?,?)',
                           (row['taxid'], assembly_accession, int(assembly_version), ftp_suffix,))
             c.execute('CREATE INDEX parent_ncbi_tid_index on taxonomy(parent_ncbi_tid)')
@@ -94,5 +137,5 @@ class RefSeqDatabase:
             with open(os.path.join(db_dir, 'metadata.json'), 'w') as outfile:
                 json.dump(metadata, outfile)
 
-    def get_ncbi_tid(self, refseq_accession_version):
-        return self.blaze.refseq_version[self.blaze.refseq_version.refseq_version == refseq_accession_version]
+    def __del__(self):
+        self.conn.close()
