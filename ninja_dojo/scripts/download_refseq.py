@@ -4,7 +4,7 @@ import urllib.request
 import re
 import os
 
-from ninja_trebuchet.utils import line_bytestream_gzip
+from ninja_utils.utils import line_bytestream_gzip
 
 from ninja_dojo.taxonomy import NCBITree
 from ninja_dojo.database import RefSeqDatabase
