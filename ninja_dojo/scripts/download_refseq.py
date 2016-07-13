@@ -50,7 +50,7 @@ def binary_fasta(fh, db, prefix_set):
             if refseq_accession_version[:2] in prefix_set:
                 ncbi_tid = db.get_ncbi_tid_from_refseq_accession(find_between(refseq_accession_version, b'_', b'.').decode())
                 if ncbi_tid:
-                    title = b'nbci_tid|%d|%s' % (ncbi_tid[0], line[1:])
+                    title = b'ncbi_tid|%d|%s' % (ncbi_tid[0], line[1:])
                     data = b''
             else:
                 title = b''
@@ -61,8 +61,8 @@ def binary_fasta(fh, db, prefix_set):
 
 
 @click.command()
-@click.argument('output', type=click.Path(exists=False), default='-')
-@click.argument('prefixes', default='NC,AC')
+@click.option('--output', type=click.Path(exists=False), default='-')
+@click.option('--prefixes', default='NC,AC')
 def download_refseq(output, prefixes):
     urls = ['ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea',
             'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/bacteria',
@@ -81,6 +81,8 @@ def download_refseq(output, prefixes):
     db = RefSeqDatabase()
 
     prefix_set = set([str.encode(_) for _ in prefixes.split(',')])
+    if '*' in prefix_set:
+        prefix_set = set(db.refseq_prefix_mapper.keys())
 
     with click.open_file(output, 'wb') as outf:
         for file in filelist:
