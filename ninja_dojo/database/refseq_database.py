@@ -41,10 +41,14 @@ class RefSeqDatabase:
         for row in cur:
             yield '%s%s_%s' % (self.ftp_prefix, '%s.%d' % (row[1], row[2]), row[3])
 
-    # TODO: Do this later
-    # def get_assembly_row(self, ncbi_tid):
-    #     cur = self.conn.cursor()
-    #     cur.execute('SELECT ? ?', ())
+    #TODO: Do this later
+    def get_ncbi_tid_from_gi(self, gi):
+        cur = self.conn.cursor()
+
+        # ncbi_tid, refseq_prefix, refseq_accession, refseq_version, gi, length
+        cur.execute('SELECT ncbi_tid FROM refseq WHERE gi = ?',
+                    (gi,))
+        return cur.fetchone()
 
     def get_ncbi_tid_from_refseq_accession_version(self, refseq_accession_version):
         cur = self.conn.cursor()
@@ -58,7 +62,15 @@ class RefSeqDatabase:
         # ncbi_tid, refseq_prefix, refseq_accession, refseq_version, gi, length
         cur.execute('SELECT ncbi_tid FROM refseq WHERE refseq_prefix = ? AND refseq_accession = ? AND refseq_version = ?',
                     (refseq_prefix, refseq_accession, int(refseq_version)))
-        return next(cur)[0]
+        return cur.fetchone()
+
+    def get_ncbi_tid_from_refseq_accession(self, refseq_accession):
+        cur = self.conn.cursor()
+
+        # ncbi_tid, refseq_prefix, refseq_accession, refseq_version, gi, length
+        cur.execute('SELECT ncbi_tid FROM refseq WHERE refseq_accession = ?',
+                    (refseq_accession,))
+        return cur.fetchone()
 
     def get_ncbi_tid_row(self, ncbi_tid):
         cur = self.conn.cursor()
@@ -68,7 +80,7 @@ class RefSeqDatabase:
             'SELECT * FROM taxonomy WHERE ncbi_tid = ?',
             (ncbi_tid))
 
-        return next(cur)[0]
+        return cur.fetchone()
 
     @classmethod
     def _create(cls, db_dir, ftp_prefix):
