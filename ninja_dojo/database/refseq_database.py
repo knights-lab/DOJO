@@ -1,6 +1,5 @@
 import sqlite3
 import os
-import blaze
 import json
 
 from .. import SETTINGS, LOGGER
@@ -42,8 +41,10 @@ class RefSeqDatabase:
         for row in cur:
             yield '%s%s_%s' % (self.ftp_prefix, '%s.%d' % (row[1], row[2]), row[3])
 
-    def get_assembly_row(self, ncbi_tid):
-        self.cur.execute('SELECT ? ?', )
+    # TODO: Do this later
+    # def get_assembly_row(self, ncbi_tid):
+    #     cur = self.conn.cursor()
+    #     cur.execute('SELECT ? ?', ())
 
     def get_ncbi_tid_from_refseq_accession_version(self, refseq_accession_version):
         cur = self.conn.cursor()
