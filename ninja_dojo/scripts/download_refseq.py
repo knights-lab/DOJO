@@ -90,7 +90,7 @@ def download_refseq(output, prefixes):
             with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
                 fasta_fh = line_bytestream_gzip(ftp_stream)
                 for title, seq in binary_fasta(fasta_fh, db, prefix_set):
-                    outf.write(b'>%s/n%s/n' % (title, seq))
+                    outf.write(b'>%s\n%s\n' % (title, seq))
 
 
 if __name__ == '__main__':
