@@ -1,7 +1,7 @@
 import urllib.request
 import tarfile
 
-from ninja_trebuchet.factory import Downloadable
+from ninja_utils.factory import Downloadable
 
 from .. import SETTINGS
 

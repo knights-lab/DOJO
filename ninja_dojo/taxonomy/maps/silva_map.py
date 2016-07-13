@@ -2,8 +2,8 @@ import csv
 from glob import glob
 import os
 
-from ninja_trebuchet.utils import reverse_dict
-from ninja_trebuchet.factory import Pickleable, download
+from ninja_utils.utils import reverse_dict
+from ninja_utils.factory import Pickleable, download
 
 from ...downloaders.download_silva2ncbi_taxonomy import SilvaMapping
 

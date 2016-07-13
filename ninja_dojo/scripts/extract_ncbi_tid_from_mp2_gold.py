@@ -6,7 +6,7 @@ from glob import glob
 import click
 import csv
 
-from ninja_trebuchet.parsers import FASTQ
+from ninja_utils.parsers import FASTQ
 
 from ninja_dojo.taxonomy.maps import RefseqCatalogMap
 

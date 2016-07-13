@@ -2,8 +2,8 @@ import urllib.request
 import os
 import re
 
-from ninja_trebuchet.factory import Downloadable
-from ninja_trebuchet.utils import line_bytestream_gzip
+from ninja_utils.factory import Downloadable
+from ninja_utils.utils import line_bytestream_gzip
 
 from .. import SETTINGS
 

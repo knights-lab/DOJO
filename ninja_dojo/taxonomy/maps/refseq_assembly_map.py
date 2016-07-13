@@ -2,8 +2,8 @@ import os
 import pandas as pd
 from collections import defaultdict
 
-from ninja_trebuchet.factory import Pickleable, download
-from ninja_trebuchet.utils import reverse_dict
+from ninja_utils.factory import Pickleable, download
+from ninja_utils.utils import reverse_dict
 
 from ... import SETTINGS, LOGGER
 from ...downloaders import RefseqAssemblySummary

@@ -6,7 +6,7 @@ from collections import Counter
 
 from ninja_dojo.database import RefSeqDatabase
 from ninja_dojo.taxonomy import NCBITree
-from ninja_trebuchet.utils import download_txt_url
+from ninja_utils.utils import download_txt_url
 
 
 def yield_ftp_links(blaze, specified_kingdoms, tree):

@@ -19,7 +19,7 @@ import csv
 from functools import lru_cache
 from collections import defaultdict
 
-from ninja_trebuchet.factory import Pickleable, download
+from ninja_utils.factory import Pickleable, download
 
 from .. import SETTINGS, LOGGER
 from ..downloaders import NCBITaxdmp

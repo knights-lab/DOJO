@@ -1,5 +1,5 @@
-from ninja_trebuchet.config import Settings
-from ninja_trebuchet import Logger
+from ninja_utils.config import Settings
+from ninja_utils import Logger
 from ninja_dojo.config.settings import ninja_dojo_settings
 
 SETTINGS = Settings('dojo', ninja_dojo_settings)

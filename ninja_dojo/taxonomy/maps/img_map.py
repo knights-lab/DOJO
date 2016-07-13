@@ -1,8 +1,8 @@
 import csv
 import os
 
-from ninja_trebuchet.utils import reverse_dict
-from ninja_trebuchet.factory import Pickleable, Scroll, scrolling
+from ninja_utils.utils import reverse_dict
+from ninja_utils.factory import Pickleable, Scroll, scrolling
 
 from ... import SETTINGS
 

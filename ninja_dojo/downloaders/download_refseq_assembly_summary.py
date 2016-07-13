@@ -1,7 +1,7 @@
 import os
 
-from ninja_trebuchet.factory import Downloadable
-from ninja_trebuchet.utils import download_txt_url
+from ninja_utils.factory import Downloadable
+from ninja_utils.utils import download_txt_url
 
 from .. import SETTINGS
 
