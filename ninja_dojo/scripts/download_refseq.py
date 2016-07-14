@@ -4,26 +4,11 @@ import urllib.request
 import re
 import os
 
+from collections import defaultdict
 from ninja_utils.utils import line_bytestream_gzip
 
 from ninja_dojo.taxonomy import NCBITree
 from ninja_dojo.database import RefSeqDatabase
-
-#
-# #!/usr/bin/env bash
-#
-# #wget "ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/bacteria/assembly_summary.txt"
-# #awk -F "\t" '$12=="Complete Genome" && $11=="latest"{print $20}' assembly_summary.txt > ftpdirpaths
-# #awk 'BEGIN{FS=OFS="/";filesuffix="genomic.fna.gz"}{ftpdir=$0;asm=$6;file=asm"_"filesuffix;print ftpdir,file}' ftpdirpaths > ftpfilepaths
-#
-# #wget "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea/*.genomic.fna.gz"
-# #wget "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/bacteria/*.genomic.fna.gz"
-# #wget "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/fungi/*.genomic.fna.gz"
-# #wget "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/viral/*.genomic.fna.gz"
-# #wget "ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa/*.genomic.fna.gz"
-#
-# zcat *.gz > ncbi_cat.refseq.fna
-# #project/flatiron/ben/bin/blast/dustmasker -in ncbi.fna -infmt fasta -outfmt fasta -out ncbi.masked.fna
 
 
 def find_between(s, first, last):
@@ -48,7 +33,8 @@ def binary_fasta(fh, db, prefix_set):
             # line_split = line.split(b'|')
             refseq_accession_version = find_between(line, b'ref|', b'|')
             if refseq_accession_version[:2] in prefix_set:
-                ncbi_tid = db.get_ncbi_tid_from_refseq_accession(find_between(refseq_accession_version, b'_', b'.').decode())
+                ncbi_tid = db.get_ncbi_tid_from_refseq_accession(
+                    find_between(refseq_accession_version, b'_', b'.').decode())
                 if ncbi_tid:
                     title = b'ncbi_tid|%d|%s' % (ncbi_tid[0], line[1:])
                     data = b''
@@ -62,31 +48,40 @@ def binary_fasta(fh, db, prefix_set):
 
 @click.command()
 @click.option('--output', type=click.Path(exists=False), default='-')
-@click.option('--prefixes', default='NC,AC')
-def download_refseq(output, prefixes):
-    urls = ['ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea',
-            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/bacteria',
-            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/fungi',
-            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/viral',
-            'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa']
+@click.option('--prefixes', default='NC,AC', help="Supply a comma-seperated list where the options are choices in ('AC', 'NC', 'NG', 'NM', 'NT', 'NW', 'NZ', '*') e.g. NC,AC")
+@click.option('--kingdoms', default='*', help="Supply a comma-seperated list where the options are choices in ('archaea', 'bacteria', 'fungi', 'viral', 'protozoa', '*') e.g. archaea,bacteria")
+def download_refseq(output, prefixes, kingdoms):
+    url_dict = defaultdict(str,
+        zip(('archaea', 'bacteria', 'fungi', 'viral', 'protozoa'), ('ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea',
+                                                                    'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/bacteria',
+                                                                    'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/fungi',
+                                                                    'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/viral',
+                                                                    'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa')))
+
+    kingdoms = kingdoms.split(',')
+    if '*' in kingdoms:
+        urls = url_dict.values()
+    else:
+        urls = [url_dict[_] for _ in kingdoms]
+
     db = RefSeqDatabase()
-
-    prefix_set = set([str.encode(_) for _ in prefixes.split(',')])
-
     # check for the glob prefix
-    if '*' in prefix_set:
-        prefix_set = set(db.refseq_prefix_mapper.keys())
+    prefixes = prefixes.split(',')
+    if '*' in prefixes:
+        prefix_set = set([str.encode(_) for _ in db.refseq_prefix_mapper.keys()])
+    else:
+        prefix_set = set([str.encode(_) for _ in prefixes])
 
-    for url in urls:
-        # Request the listing of the directory
-        req = urllib.request.Request(url)
-        string = urllib.request.urlopen(req).read().decode('utf-8')
+    with click.open_file(output, 'wb') as outf:
+        for url in urls:
+            # Request the listing of the directory
+            req = urllib.request.Request(url)
+            string = urllib.request.urlopen(req).read().decode('utf-8')
 
-        # Grab the filename ending with catalog.gz
-        pattern_cat = re.compile('[a-zA-Z0-9.-]*.genomic.fna.gz')
-        filelist = pattern_cat.findall(string)
+            # Grab the filename ending with catalog.gz
+            pattern_cat = re.compile('[a-zA-Z0-9.-]*.genomic.fna.gz')
+            filelist = pattern_cat.findall(string)
 
-        with click.open_file(output, 'wb') as outf:
             for file in filelist:
                 req_file = urllib.request.Request('%s/%s' % (url, file))
                 with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
