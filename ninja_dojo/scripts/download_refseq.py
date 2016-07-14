@@ -45,8 +45,8 @@ def binary_fasta(fh, db, prefix_set):
 
 @click.command()
 @click.option('--output', type=click.Path(exists=False), default='-')
-@click.option('--prefixes', default='NC,AC', help="Supply a comma-seperated list where the options are choices in ('AC', 'NC', 'NG', 'NM', 'NT', 'NW', 'NZ', '*') e.g. NC,AC")
-@click.option('--kingdoms', default='*', help="Supply a comma-seperated list where the options are choices in ('archaea', 'bacteria', 'fungi', 'viral', 'protozoa', '*') e.g. archaea,bacteria")
+@click.option('--prefixes', default='*', help="Supply a comma-seperated list where the options are choices in ('AC', 'NC', 'NG', 'NM', 'NT', 'NW', 'NZ') e.g. NC,AC default=all")
+@click.option('--kingdoms', default='*', help="Supply a comma-seperated list where the options are choices in ('archaea', 'bacteria', 'fungi', 'viral', 'protozoa') e.g. archaea,bacteria default=all")
 def download_refseq(output, prefixes, kingdoms):
     url_dict = defaultdict(str,
         zip(('archaea', 'bacteria', 'fungi', 'viral', 'protozoa'), ('ftp://ftp.ncbi.nlm.nih.gov/refseq/release/archaea',
