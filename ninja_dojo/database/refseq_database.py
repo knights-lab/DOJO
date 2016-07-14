@@ -78,7 +78,7 @@ class RefSeqDatabase:
         # ncbi_tid, name, rank, parent_ncbi_tid
         cur.execute(
             'SELECT * FROM taxonomy WHERE ncbi_tid = ?',
-            (ncbi_tid))
+            (ncbi_tid,))
 
         return cur.fetchone()
 

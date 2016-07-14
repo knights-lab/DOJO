@@ -2,12 +2,10 @@
 import click
 import urllib.request
 import re
-import os
 
 from collections import defaultdict
 from ninja_utils.utils import line_bytestream_gzip
 
-from ninja_dojo.taxonomy import NCBITree
 from ninja_dojo.database import RefSeqDatabase
 
 
@@ -33,8 +31,7 @@ def binary_fasta(fh, db, prefix_set):
             # line_split = line.split(b'|')
             refseq_accession_version = find_between(line, b'ref|', b'|')
             if refseq_accession_version[:2] in prefix_set:
-                ncbi_tid = db.get_ncbi_tid_from_refseq_accession(
-                    find_between(refseq_accession_version, b'_', b'.').decode())
+                ncbi_tid = db.get_ncbi_tid_from_refseq_accession_version(refseq_accession_version.decode())
                 if ncbi_tid:
                     title = b'ncbi_tid|%d|%s' % (ncbi_tid[0], line[1:])
                     data = b''
