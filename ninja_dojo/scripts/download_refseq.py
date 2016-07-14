@@ -4,18 +4,9 @@ import urllib.request
 import re
 
 from collections import defaultdict
-from ninja_utils.utils import line_bytestream_gzip
+from ninja_utils.utils import line_bytestream_gzip, find_between
 
 from ninja_dojo.database import RefSeqDatabase
-
-
-def find_between(s, first, last):
-    try:
-        start = s.index(first) + len(first)
-        end = s.index(last, start)
-        return s[start:end]
-    except ValueError:
-        return ""
 
 
 def binary_fasta(fh, db, prefix_set):
