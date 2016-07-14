@@ -69,28 +69,30 @@ def download_refseq(output, prefixes):
             'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/fungi',
             'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/viral',
             'ftp://ftp.ncbi.nlm.nih.gov/refseq/release/protozoa']
-    url = urls[0]
-    # Request the listing of the directory
-    req = urllib.request.Request(url)
-    string = urllib.request.urlopen(req).read().decode('utf-8')
-
-    # Grab the filename ending with catalog.gz
-    pattern_cat = re.compile('[a-zA-Z0-9.-]*.genomic.fna.gz')
-    filelist = pattern_cat.findall(string)
-
     db = RefSeqDatabase()
 
     prefix_set = set([str.encode(_) for _ in prefixes.split(',')])
+
+    # check for the glob prefix
     if '*' in prefix_set:
         prefix_set = set(db.refseq_prefix_mapper.keys())
 
-    with click.open_file(output, 'wb') as outf:
-        for file in filelist:
-            req_file = urllib.request.Request('%s/%s' % (url, file))
-            with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
-                fasta_fh = line_bytestream_gzip(ftp_stream)
-                for title, seq in binary_fasta(fasta_fh, db, prefix_set):
-                    outf.write(b'>%s\n%s\n' % (title, seq))
+    for url in urls:
+        # Request the listing of the directory
+        req = urllib.request.Request(url)
+        string = urllib.request.urlopen(req).read().decode('utf-8')
+
+        # Grab the filename ending with catalog.gz
+        pattern_cat = re.compile('[a-zA-Z0-9.-]*.genomic.fna.gz')
+        filelist = pattern_cat.findall(string)
+
+        with click.open_file(output, 'wb') as outf:
+            for file in filelist:
+                req_file = urllib.request.Request('%s/%s' % (url, file))
+                with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
+                    fasta_fh = line_bytestream_gzip(ftp_stream)
+                    for title, seq in binary_fasta(fasta_fh, db, prefix_set):
+                        outf.write(b'>%s\n%s\n' % (title, seq))
 
 
 if __name__ == '__main__':
