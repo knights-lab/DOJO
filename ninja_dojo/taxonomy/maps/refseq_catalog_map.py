@@ -4,7 +4,6 @@ from collections import defaultdict
 import csv
 
 from ninja_utils.factory import Pickleable, download
-from ninja_utils.utils import reverse_dict
 
 from ... import SETTINGS, LOGGER
 from ...downloaders import RefseqCatalog
