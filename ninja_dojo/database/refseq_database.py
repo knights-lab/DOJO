@@ -41,6 +41,33 @@ class RefSeqDatabase:
         for row in cur:
             yield '%s%s_%s' % (self.ftp_prefix, '%s.%d' % (row[1], row[2]), row[3])
 
+    def yield_ftp_links_from_name(self, query):
+        ncbi_tids = set([row[0] for row in self.yield_ncbi_tid_row_from_name(query)])
+        for ncbi_tid in ncbi_tids:
+            for link in self.yield_ftp_links(ncbi_tid):
+                yield ncbi_tid, link
+
+    def yield_ncbi_tid_row_from_name(self, query):
+        cur = self.conn.cursor()
+
+        # ncbi_tid, name, rank, parent_ncbi_tid
+        cur.execute("SELECT * FROM taxonomy WHERE name LIKE " + "'%" + query + "%'")
+
+        for row in cur:
+            yield row
+
+    def yield_ncbi_tid_row_from_name_and_rank(self, query, rank):
+        cur = self.conn.cursor()
+
+        rank = self.ncbi_rank_mapper[rank]
+
+        # ncbi_tid, name, rank, parent_ncbi_tid
+        cur.execute("SELECT * FROM taxonomy WHERE name LIKE " + "'%" + query + "%'" + "AND rank = ?", (rank,))
+
+        for row in cur:
+            yield row
+
+
     #TODO: Do this later
     def get_ncbi_tid_from_gi(self, gi):
         cur = self.conn.cursor()
