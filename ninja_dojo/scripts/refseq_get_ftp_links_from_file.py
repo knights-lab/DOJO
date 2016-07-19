@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import click
+import re
 
 from ninja_dojo.database import RefSeqDatabase
 from ninja_dojo.taxonomy import NCBITree
@@ -15,6 +16,9 @@ def refseq_get_ftp_links_from_file(input, output):
 
     ncbi_tid_set = set()
     for line in input:
+        line = str.replace(line, ' unclassified', '')
+        line = str.replace(line, 'cf', '')
+
         [ncbi_tid_set.add(_[0]) for _ in db.yield_ncbi_tid_row_from_name(line.strip())]
 
     ncbi_tid_successors = set()
