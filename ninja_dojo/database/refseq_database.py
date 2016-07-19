@@ -2,6 +2,8 @@ import sqlite3
 import os
 import json
 
+from ninja_utils.utils import reverse_dict
+
 from .. import SETTINGS, LOGGER
 from ..taxonomy import NCBITree
 from ..taxonomy.maps import RefseqAssemblyMap, RefseqCatalogMap
@@ -41,7 +43,7 @@ class RefSeqDatabase:
         for row in cur:
             yield '%s%s_%s' % (self.ftp_prefix, '%s.%d' % (row[1], row[2]), row[3])
 
-    def yield_ftp_links_from_name(self, query):
+    def yield_ncbi_tid_and_ftp_links_from_name(self, query):
         ncbi_tids = set([row[0] for row in self.yield_ncbi_tid_row_from_name(query)])
         for ncbi_tid in ncbi_tids:
             for link in self.yield_ftp_links(ncbi_tid):
@@ -66,6 +68,32 @@ class RefSeqDatabase:
 
         for row in cur:
             yield row
+
+    def yield_ncbi_tid_and_refseq_accession_version_from_name(self, query):
+        ncbi_tids = set([row[0] for row in self.yield_ncbi_tid_row_from_name(query)])
+
+        cur = self.conn.cursor()
+
+        for ncbi_tid in ncbi_tids:
+            cur.execute('SELECT * FROM refseq WHERE ncbi_tid = ?', (ncbi_tid,))
+            refseq_mapper = reverse_dict(self.refseq_prefix_mapper)
+
+            # ncbi_tid, refseq_prefix, refseq_accession, refseq_version, gi, length
+            for row in cur:
+                yield row[0], '%s_%s.%d' % (refseq_mapper[1], row[2], row[3])
+
+    def yield_ncbi_tid_and_refseq_accession_version_from_name_and_refseq_prefix(self, query, refseq_prefix):
+        ncbi_tids = set([row[0] for row in self.yield_ncbi_tid_row_from_name(query)])
+        refseq_mapper = reverse_dict(self.refseq_prefix_mapper)
+        cur = self.conn.cursor()
+
+        for ncbi_tid in ncbi_tids:
+            cur.execute('SELECT * FROM refseq WHERE ncbi_tid = ? AND refseq_prefix = ?', (ncbi_tid, self.refseq_prefix_mapper[refseq_prefix],))
+            # ncbi_tid, refseq_prefix, refseq_accession, refseq_version, gi, length
+            for row in cur:
+                yield row[0], '%s_%s.%d' % (refseq_mapper[row[1]], row[2], row[3])
+
+
 
 
     #TODO: Do this later
