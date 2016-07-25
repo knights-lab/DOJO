@@ -33,7 +33,7 @@ def refseq_annotate(input, output, extract_refseq_id, prefixes):
         if refseq_accession_version[:2] in prefix_set:
             ncbi_tid = db.get_ncbi_tid_from_refseq_accession_version(refseq_accession_version)
             if ncbi_tid:
-                title = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title)
+                title = '>ncbi_tid|%d|%s' % (ncbi_tid[0], title[1:])
             output.write('%s\n%s\n' % (title, seq))
 
 
