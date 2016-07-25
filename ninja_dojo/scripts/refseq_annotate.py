@@ -26,14 +26,14 @@ def refseq_annotate(input, output, extract_refseq_id, prefixes):
     else:
         prefix_set = set([_ for _ in prefixes])
 
-        inf_fasta = FASTA(input)
-        for title, seq in inf_fasta.read():
-            refseq_accession_version = find_between(title, begin, end)
-            if refseq_accession_version[:2] in prefix_set:
-                ncbi_tid = db.get_ncbi_tid_from_refseq_accession_version(refseq_accession_version)
-                if ncbi_tid:
-                    title = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title)
-                output.write('>%s\n%s\n' % (title, seq))
+    inf_fasta = FASTA(input)
+    for title, seq in inf_fasta.read():
+        refseq_accession_version = find_between(title, begin, end)
+        if refseq_accession_version[:2] in prefix_set:
+            ncbi_tid = db.get_ncbi_tid_from_refseq_accession_version(refseq_accession_version)
+            if ncbi_tid:
+                title = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title)
+            output.write('>%s\n%s\n' % (title, seq))
 
 
 if __name__ == '__main__':
