@@ -66,7 +66,7 @@ class NCBITree(Pickleable):
                 rank = cols[4]
                 nodes[child_node] = rank
                 if child_node != parent_node:
-                    edges.append((child_node, parent_node))
+                    edges.append((parent_node, child_node))
 
         self.tree.add_edges_from(edges)
         nx.set_node_attributes(self.tree, 'rank', nodes)
@@ -152,6 +152,20 @@ class NCBITree(Pickleable):
             if rank in self.mp_ranks:
                 name_lineage.append(self.mp_ranks[rank] + name.replace(' ', '_'))
         return ';'.join(reversed(name_lineage))
+
+    def lca(self, p, q):
+        path_p = nx.shortest_path(self.tree, p, 1)
+        path_q = nx.shortest_path(self.tree, q, 1)
+
+        size_p = len(path_p)
+        size_q = len(path_q)
+
+        p_off = size_p - size_q if size_p - size_q > 0 else 0
+        q_off = size_q - size_p if size_q - size_p > 0 else 0
+
+        for i, j in zip(path_p[p_off:], path_q[q_off:]):
+            if i == j:
+                return i
 
 
 def main():
