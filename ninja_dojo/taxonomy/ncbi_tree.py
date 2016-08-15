@@ -153,7 +153,8 @@ class NCBITree(Pickleable):
                 name_lineage.append(self.mp_ranks[rank] + name.replace(' ', '_'))
         return ';'.join(reversed(name_lineage))
 
-    def lca(self, p, q):
+    @lru_cache(maxsize=128)
+    def lowest_common_ancestor(self, p, q):
         path_p = nx.shortest_path(self.tree, p, 1)
         path_q = nx.shortest_path(self.tree, q, 1)
 
