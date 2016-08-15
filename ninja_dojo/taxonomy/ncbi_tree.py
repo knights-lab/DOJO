@@ -66,7 +66,7 @@ class NCBITree(Pickleable):
                 rank = cols[4]
                 nodes[child_node] = rank
                 if child_node != parent_node:
-                    edges.append((parent_node, child_node))
+                    edges.append((child_node, parent_node))
 
         self.tree.add_edges_from(edges)
         nx.set_node_attributes(self.tree, 'rank', nodes)
