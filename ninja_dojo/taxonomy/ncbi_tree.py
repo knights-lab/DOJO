@@ -142,6 +142,7 @@ class NCBITree(Pickleable):
 
     # Note that this will create a global cache for all instances of NCBITree.
     # Will be fine unless if you want to compare trees.
+    #TODO: This method will be deprecated
     @lru_cache(maxsize=128)
     def gg_lineage(self, taxon_id):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
@@ -152,6 +153,17 @@ class NCBITree(Pickleable):
             if rank in self.mp_ranks:
                 name_lineage.append(self.mp_ranks[rank] + name.replace(' ', '_'))
         return ';'.join(reversed(name_lineage))
+
+    @lru_cache(maxsize=128)
+    def green_genes_lineage(self, taxon_id, depth=7):
+        taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
+        name_lineage = []
+        for x in taxon_id_lineage:
+            rank = self.tree.node[x]['rank']
+            name = self.taxon_id2name[x]
+            if rank in self.mp_ranks:
+                name_lineage.append(self.mp_ranks[rank] + name.replace(' ', '_'))
+        return ';'.join(reversed(name_lineage)[:depth])
 
     @lru_cache(maxsize=128)
     def lowest_common_ancestor(self, p, q):
