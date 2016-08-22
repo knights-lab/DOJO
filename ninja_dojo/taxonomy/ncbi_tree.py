@@ -17,7 +17,7 @@ import os
 import networkx as nx
 import csv
 from functools import lru_cache
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 from ninja_utils.factory import Pickleable, download
 
@@ -30,7 +30,7 @@ class NCBITree(Pickleable):
         # Private variables (should be set in settings)
         self._downloaders = _downloaders
         if mp_ranks is None:
-            self.mp_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
+            self.mp_ranks = OrderedDict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
                      ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__')))
         else:
             self.mp_ranks = mp_ranks
@@ -166,6 +166,9 @@ class NCBITree(Pickleable):
         taxonomy = name_lineage[::-1]
         if len(taxonomy) >= depth:
             return ';'.join(taxonomy[:depth])
+        else:
+            # Return non-blank taxonomy
+            return ':'.join(taxonomy + list(self.mp_ranks.values())[depth - len(taxonomy)-1:])
 
     @lru_cache(maxsize=128)
     def lowest_common_ancestor(self, p, q):
