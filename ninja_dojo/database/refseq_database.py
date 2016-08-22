@@ -140,7 +140,7 @@ class RefSeqDatabase:
     def get_ncbi_tid_from_assembly_accession_version(self, assembly_accession_version):
         cur = self.conn.cursor()
 
-        cur.execute('SELECT ncbi_tid FROM assembly WHERE assembly_access = ? AND assembly_version = ?', assembly_accession_version.split('.'))
+        cur.execute('SELECT ncbi_tid FROM assembly WHERE assembly_accession = ? AND assembly_version = ?', assembly_accession_version.split('.'))
 
         return cur.fetchone()
 
