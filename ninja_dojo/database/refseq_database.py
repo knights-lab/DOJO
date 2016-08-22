@@ -138,7 +138,11 @@ class RefSeqDatabase:
         return cur.fetchone()
 
     def get_ncbi_tid_from_assembly_accession_version(self, assembly_accession_version):
-        pass
+        cur = self.conn.cursor()
+
+        cur.execute('SELECT ncbi_tid FROM assembly WHERE assembly_access = ? AND assembly_version = ?', assembly_accession_version.split('.'))
+
+        return cur.fetchone()
 
     @classmethod
     def _create(cls, db_dir, ftp_prefix):
