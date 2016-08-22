@@ -18,6 +18,8 @@ import networkx as nx
 import csv
 from functools import lru_cache
 from collections import defaultdict, OrderedDict
+import copy
+import itertools
 
 from ninja_utils.factory import Pickleable, download
 
@@ -157,18 +159,13 @@ class NCBITree(Pickleable):
     @lru_cache(maxsize=128)
     def green_genes_lineage(self, taxon_id, depth=7):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
-        name_lineage = []
+        name_lineage = copy.deepcopy(self.mp_ranks)
         for x in taxon_id_lineage:
             rank = self.tree.node[x]['rank']
             name = self.taxon_id2name[x]
-            if rank in self.mp_ranks:
-                name_lineage.append(self.mp_ranks[rank] + name.replace(' ', '_'))
-        taxonomy = name_lineage[::-1]
-        if len(taxonomy) >= depth:
-            return ';'.join(taxonomy[:depth])
-        else:
-            # Return non-blank taxonomy
-            return ';'.join(taxonomy + list(self.mp_ranks.values())[len(taxonomy):])
+            if rank in name_lineage:
+                name_lineage[rank] += name.replace(' ', '_')
+        return ';'.join(itertools.islice(name_lineage.values(), depth))
 
     @lru_cache(maxsize=128)
     def lowest_common_ancestor(self, p, q):
