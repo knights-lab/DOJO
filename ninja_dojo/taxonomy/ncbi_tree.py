@@ -168,7 +168,7 @@ class NCBITree(Pickleable):
             return ';'.join(taxonomy[:depth])
         else:
             # Return non-blank taxonomy
-            return ':'.join(taxonomy + list(self.mp_ranks.values())[depth - len(taxonomy)-1:])
+            return ';'.join(taxonomy + list(self.mp_ranks.values())[len(taxonomy):])
 
     @lru_cache(maxsize=128)
     def lowest_common_ancestor(self, p, q):
