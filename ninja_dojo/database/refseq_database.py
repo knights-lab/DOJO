@@ -137,6 +137,9 @@ class RefSeqDatabase:
 
         return cur.fetchone()
 
+    def get_ncbi_tid_from_assembly_accession_version(self, assembly_accession_version):
+        pass
+
     @classmethod
     def _create(cls, db_dir, ftp_prefix):
         with sqlite3.connect(os.path.join(db_dir, 'refseq.db')) as conn:
