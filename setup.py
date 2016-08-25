@@ -26,7 +26,6 @@ setup(
         'console_scripts': [
             'extract_ncbi_tid_from_mp2_gold = ninja_dojo.scripts.extract_ncbi_tid_from_mp2_gold:extract_ncbi_tid',
             'refseq_get_ftp_links_from_file = ninja_dojo.scripts.refseq_get_ftp_links_from_file',
-            'subset_fasta = ninja_dojo.scripts.subset_fasta.main',
         ]
     },
     keywords='',
