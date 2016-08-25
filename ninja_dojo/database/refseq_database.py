@@ -119,12 +119,18 @@ class RefSeqDatabase:
                     (refseq_prefix, refseq_accession, int(refseq_version)))
         return cur.fetchone()
 
-    def get_ncbi_tid_from_refseq_accession(self, refseq_accession):
+    def get_ncbi_tid_from_refseq_accession(self, refseq_accession_version):
         cur = self.conn.cursor()
+        try:
+            refseq_prefix = self.refseq_prefix_mapper[refseq_accession_version[:2]]
+        except KeyError as e:
+            raise e
+
+        refseq_accession, refseq_version = refseq_accession_version[3:].split('.')
 
         # ncbi_tid, refseq_prefix, refseq_accession, refseq_version, gi, length
-        cur.execute('SELECT ncbi_tid FROM refseq WHERE refseq_accession = ?',
-                    (refseq_accession,))
+        cur.execute('SELECT ncbi_tid FROM refseq WHERE refseq_prefix = ? AND refseq_accession = ?',
+                    (refseq_prefix, refseq_accession))
         return cur.fetchone()
 
     def get_ncbi_tid_row(self, ncbi_tid):
