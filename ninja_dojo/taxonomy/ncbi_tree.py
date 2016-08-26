@@ -20,7 +20,7 @@ from functools import lru_cache
 from collections import defaultdict, OrderedDict
 import copy
 import itertools
-
+from cytoolz import get
 from ninja_utils.factory import Pickleable, download
 
 from .. import SETTINGS, LOGGER
@@ -171,7 +171,7 @@ class NCBITree(Pickleable):
                 name_lineage[rank] += name.replace(' ', '_')
         if not depth:
             return ';'.join(itertools.islice(name_lineage.values(), depth))
-        elif name_lineage.values()[depth] != self.mp_ranks.values()[depth]:
+        elif not get(depth, name_lineage.values()) == get(depth, self.mp_ranks.values()):
             return ';'.join(itertools.islice(name_lineage.values(), depth))
 
     @lru_cache(maxsize=128)

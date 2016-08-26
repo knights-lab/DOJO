@@ -29,5 +29,5 @@ setup(
         ]
     },
     keywords='',
-    install_requires=['click', 'networkx', 'nose', 'pandas', 'blaze']
+    install_requires=['click', 'networkx', 'nose', 'pandas', 'blaze', 'cytoolz']
 )
