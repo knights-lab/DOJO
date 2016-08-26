@@ -165,7 +165,10 @@ class NCBITree(Pickleable):
             name = self.taxon_id2name[x]
             if rank in name_lineage:
                 name_lineage[rank] += name.replace(' ', '_')
-        return ';'.join(itertools.islice(name_lineage.values(), depth))
+        if not depth:
+            return ';'.join(itertools.islice(name_lineage.values(), depth))
+        elif name_lineage.values()[depth] != self.mp_ranks.values()[depth]:
+            return ';'.join(itertools.islice(name_lineage.values(), depth))
 
     @lru_cache(maxsize=128)
     def lowest_common_ancestor(self, p, q):
