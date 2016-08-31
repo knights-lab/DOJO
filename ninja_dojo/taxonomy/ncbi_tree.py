@@ -102,7 +102,7 @@ class NCBITree(Pickleable):
             name = self.taxon_id2name[x]
             name_lineage.append((name, rank))
         return name_lineage
-    
+
     def get_rank_from_taxon_id(self, taxon_id):
         if taxon_id in self.tree:
             return self.tree.node[taxon_id]['rank']
