@@ -24,7 +24,7 @@ setup(
     # scripts=glob(os.path.join('scripts', '*py')),
     entry_points={
         'console_scripts': [
-            'annotate_fasta = ninja_dojo.scripts.annotate_fasa:annotate_fasta',
+            'annotate_fasta = ninja_dojo.scripts.annotate_fasta:annotate_fasta',
             'extract_ncbi_tid_from_mp2_gold = ninja_dojo.scripts.extract_ncbi_tid_from_mp2_gold:extract_ncbi_tid',
             'refseq_get_ftp_links_from_file = ninja_dojo.scripts.refseq_get_ftp_links_from_file',
             'hardmasker = ninja_dojo.scripts.hardmasker:hardmasker',
