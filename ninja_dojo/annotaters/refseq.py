@@ -4,8 +4,17 @@ from ..database import RefSeqDatabase
 from ..taxonomy import NCBITree
 
 
-def refseq_annotater(gen_fasta, set_prefix, begin, end):
+def refseq_annotater(gen_fasta, prefixes, extract_refseq_id):
+    begin, end = extract_refseq_id.split(',')
+
     db = RefSeqDatabase()
+    # check for the glob prefix
+    prefixes = prefixes.split(',')
+    if '*' in prefixes:
+        set_prefix = set([_ for _ in db.refseq_prefix_mapper.keys()])
+    else:
+        set_prefix = set([_ for _ in prefixes])
+
     tree = NCBITree()
     for title, seq in gen_fasta:
         title = '>' + title

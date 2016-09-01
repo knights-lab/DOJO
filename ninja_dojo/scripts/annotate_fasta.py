@@ -15,17 +15,7 @@ from ninja_dojo.annotaters.refseq import refseq_annotater
 @click.option('--prefixes', default='*', help="Supply a comma-seperated list where the options are choices"
                                               " in ('AC', 'NC', 'NG', 'NM', 'NT', 'NW', 'NZ') e.g. NC,AC default=all")
 def annotate_fasta(input, output, extract_refseq_id, prefixes):
-
     verify_make_dir(output)
-    # check for the glob prefix
-    prefixes = prefixes.split(',')
-
-    begin, end = extract_refseq_id.split(',')
-
-    if '*' in prefixes:
-        prefix_set = set([_ for _ in db.refseq_prefix_mapper.keys()])
-    else:
-        prefix_set = set([_ for _ in prefixes])
 
     if input == '-':
         output_fn = 'stdin'
@@ -36,7 +26,7 @@ def annotate_fasta(input, output, extract_refseq_id, prefixes):
         with open(os.path.join(output, output_fn + '.annotated.fna'), 'w') as output_fna:
             with open(os.path.join(output, output_fn + '.annotated.map'), 'w') as output_map:
                 inf_fasta = FASTA(inf)
-                annotater = refseq_annotater(inf_fasta.read(), prefix_set, begin, end)
+                annotater = refseq_annotater(inf_fasta.read(), prefixes, extract_refseq_id)
                 for lines_fna, lines_map in annotater:
                     output_fna.write(lines_fna)
                     output_map.write(lines_map)
