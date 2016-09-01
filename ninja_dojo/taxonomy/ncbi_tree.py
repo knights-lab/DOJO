@@ -167,7 +167,10 @@ class NCBITree(Pickleable):
             rank = self.tree.node[x]['rank']
             name = self.taxon_id2name[x]
             lineage[rank] = name
-        return str(lineage)
+        try:
+            return str(lineage)
+        except TypeError:
+            return None
 
     @cytoolz.memoize()
     def lowest_common_ancestor(self, p, q):
