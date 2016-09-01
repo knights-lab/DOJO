@@ -18,9 +18,8 @@ import networkx as nx
 import csv
 from functools import lru_cache
 from collections import defaultdict, OrderedDict
-import copy
 import itertools
-from cytoolz import get
+import cytoolz
 from ninja_utils.factory import Pickleable, download
 
 from .. import SETTINGS, LOGGER
@@ -28,14 +27,14 @@ from ..downloaders import NCBITaxdmp
 
 
 class NCBITree(Pickleable):
-    def __init__(self, mp_ranks=None, _downloaders=(NCBITaxdmp(),)):
+    def __init__(self, lineage_ranks=None, _downloaders=(NCBITaxdmp(),)):
         # Private variables (should be set in settings)
         self._downloaders = _downloaders
         if mp_ranks is None:
-            self.mp_ranks = OrderedDict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
-                     ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__')))
+            self.lineage_ranks = OrderedDict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
+                                                 ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__')))
         else:
-            self.mp_ranks = mp_ranks
+            self.lineage_ranks = lineage_ranks
         super().__init__(SETTINGS, LOGGER)
 
     @download
@@ -156,23 +155,19 @@ class NCBITree(Pickleable):
         for x in taxon_id_lineage:
             rank = self.tree.node[x]['rank']
             name = self.taxon_id2name[x]
-            if rank in self.mp_ranks:
-                name_lineage.append(self.mp_ranks[rank] + name.replace(' ', '_'))
+            if rank in self.lineage_ranks:
+                name_lineage.append(self.lineage_ranks[rank] + name.replace(' ', '_'))
         return ';'.join(reversed(name_lineage))
 
-    @lru_cache(maxsize=128)
+    @cytoolz.memoize()
     def green_genes_lineage(self, taxon_id, depth=7):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
-        name_lineage = copy.deepcopy(self.mp_ranks)
+        lineage = GreenGenesLineage(depth=depth)
         for x in taxon_id_lineage:
             rank = self.tree.node[x]['rank']
             name = self.taxon_id2name[x]
-            if rank in name_lineage:
-                name_lineage[rank] += name.replace(' ', '_')
-        if not depth:
-            return ';'.join(itertools.islice(name_lineage.values(), depth))
-        elif not get(depth, name_lineage.values()) == get(depth, self.mp_ranks.values()):
-            return ';'.join(itertools.islice(name_lineage.values(), depth))
+            lineage[rank] = name
+        return str(lineage)
 
     @lru_cache(maxsize=128)
     def lowest_common_ancestor(self, p, q):
@@ -188,6 +183,33 @@ class NCBITree(Pickleable):
         for i, j in zip(path_p[p_off:], path_q[q_off:]):
             if i == j:
                 return i
+
+
+class GreenGenesLineage:
+    def __init__(self, depth=7):
+        self.depth = depth
+        self.names = list(itertools.repeat('', 7))
+        self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'), range(7)))
+        self._prefixes = ('k', 'p', 'c', 'o', 'f', 'g', 's')
+
+    def __setitem__(self, rank, name):
+        if rank in self._lineage_ranks:
+            self.names[self._lineage_ranks[rank]] = name.replace(' ', '_')
+
+    def __getitem__(self, rank):
+        if rank in self._lineage_ranks:
+            return '%s__%s' % (self._prefixes[self._lineage_ranks[rank]], self.names[self._lineage_ranks[rank]])
+
+    def __str__(self):
+        if not self.depth:
+            for indx, val in enumerate(reversed(self.names)):
+                if val:
+                    return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, 7-indx)))
+        elif self.names[self.depth]:
+            return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, self.depth)))
+
+    def reset(self):
+        self.names = list(itertools.repeat('', self.depth))
 
 
 def main():
