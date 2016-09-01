@@ -169,7 +169,7 @@ class NCBITree(Pickleable):
             lineage[rank] = name
         return str(lineage)
 
-    @lru_cache(maxsize=128)
+    @cytoolz.memoize()
     def lowest_common_ancestor(self, p, q):
         path_p = nx.shortest_path(self.tree, p, 1)
         path_q = nx.shortest_path(self.tree, q, 1)
@@ -205,7 +205,7 @@ class GreenGenesLineage:
             for indx, val in enumerate(reversed(self.names)):
                 if val:
                     return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, 7-indx)))
-        elif self.names[self.depth]:
+        elif self.names[self.depth-1]:
             return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, self.depth)))
 
     def reset(self):
