@@ -6,8 +6,6 @@ import os
 from ninja_utils.parsers import FASTA
 from ninja_utils.utils import verify_make_dir
 
-from ninja_shogun.wrappers import bowtie2_build
-
 from ninja_dojo.annotaters.refseq import refseq_annotater
 
 @click.command()
