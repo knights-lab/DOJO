@@ -30,7 +30,7 @@ class NCBITree(Pickleable):
     def __init__(self, lineage_ranks=None, _downloaders=(NCBITaxdmp(),)):
         # Private variables (should be set in settings)
         self._downloaders = _downloaders
-        if mp_ranks is None:
+        if lineage_ranks is None:
             self.lineage_ranks = OrderedDict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'),
                                                  ('k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__')))
         else:
