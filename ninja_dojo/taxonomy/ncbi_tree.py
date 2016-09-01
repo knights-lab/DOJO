@@ -160,9 +160,9 @@ class NCBITree(Pickleable):
         return ';'.join(reversed(name_lineage))
 
     @cytoolz.memoize()
-    def green_genes_lineage(self, taxon_id, depth=7):
+    def green_genes_lineage(self, taxon_id, depth=7, depth_force=False):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
-        lineage = GreenGenesLineage(depth=depth)
+        lineage = GreenGenesLineage(depth=depth, depth_force=depth_force)
         for x in taxon_id_lineage:
             rank = self.tree.node[x]['rank']
             name = self.taxon_id2name[x]
@@ -189,7 +189,8 @@ class NCBITree(Pickleable):
 
 
 class GreenGenesLineage:
-    def __init__(self, depth=7):
+    def __init__(self, depth_force=False, depth=7):
+        self.depth_force = depth_force
         self.depth = depth
         self.names = list(itertools.repeat('', 7))
         self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'), range(7)))
@@ -208,6 +209,8 @@ class GreenGenesLineage:
             for indx, val in enumerate(reversed(self.names)):
                 if val:
                     return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, 7-indx)))
+        elif self.depth_force:
+            ';'.join('%s__%s' % i for i in zip(self._prefixes, self.names))
         elif self.names[self.depth-1]:
             return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, self.depth)))
 

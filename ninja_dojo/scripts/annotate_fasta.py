@@ -14,6 +14,8 @@ from ninja_dojo.annotaters.refseq import refseq_annotater
 @click.option('-x', '--extract_refseq_id', default='ref|,|', help='Characters that sandwich the RefSeq Accession Version in the reference FASTA (default="ref|,|")')
 @click.option('--prefixes', default='*', help="Supply a comma-seperated list where the options are choices"
                                               " in ('AC', 'NC', 'NG', 'NM', 'NT', 'NW', 'NZ') e.g. NC,AC default=all")
+@click.option('-d', '--depth', default=7, help="The depth to annotate the map")
+@click.option('-f', '--depth-force', default=True, help="Force the depth criterion if missing annotation")
 def annotate_fasta(input, output, extract_refseq_id, prefixes):
     verify_make_dir(output)
 
