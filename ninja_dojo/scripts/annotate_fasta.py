@@ -14,7 +14,7 @@ from ninja_dojo.annotaters.refseq import refseq_annotater
 @click.option('-x', '--extract_refseq_id', default='ref|,|', help='Characters that sandwich the RefSeq Accession Version in the reference FASTA (default="ref|,|")')
 @click.option('--prefixes', default='*', help="Supply a comma-seperated list where the options are choices"
                                               " in ('AC', 'NC', 'NG', 'NM', 'NT', 'NW', 'NZ') e.g. NC,AC default=all")
-def shogun_bt2_db(input, output, extract_refseq_id, prefixes):
+def annotate_fasta(input, output, extract_refseq_id, prefixes):
 
     verify_make_dir(output)
     # check for the glob prefix
@@ -42,4 +42,4 @@ def shogun_bt2_db(input, output, extract_refseq_id, prefixes):
                     output_map.write(lines_map)
 
 if __name__ == '__main__':
-    shogun_bt2_db()
+    annotate_fasta()
