@@ -6,10 +6,10 @@ from ..taxonomy import NCBITree
 
 
 class RefSeqAnnotater(Annotater):
-    def __init__(self, extract_gi, prefixes, db: RefSeqDatabase, tree: NCBITree, depth=7, depth_force=True):
+    def __init__(self, extract_refseq_accession_version, prefixes, db: RefSeqDatabase, tree: NCBITree, depth=7, depth_force=True):
         Annotater.__init__(self)
 
-        self.begin, self.end = extract_gi.split(',')
+        self.begin, self.end = extract_refseq_accession_version.split(',')
 
         prefixes = prefixes.split(',')
         if '*' in prefixes:
