@@ -16,7 +16,7 @@ from ninja_dojo.annotaters.refseq import refseq_annotater
                                               " in ('AC', 'NC', 'NG', 'NM', 'NT', 'NW', 'NZ') e.g. NC,AC default=all")
 @click.option('-d', '--depth', default=7, help="The depth to annotate the map")
 @click.option('-f', '--depth-force', default=True, help="Force the depth criterion if missing annotation")
-def annotate_fasta(input, output, extract_refseq_id, prefixes):
+def annotate_fasta(input, output, extract_refseq_id, prefixes, depth, depth_force):
     verify_make_dir(output)
 
     if input == '-':
@@ -28,7 +28,7 @@ def annotate_fasta(input, output, extract_refseq_id, prefixes):
         with open(os.path.join(output, output_fn + '.annotated.fna'), 'w') as output_fna:
             with open(os.path.join(output, output_fn + '.annotated.map'), 'w') as output_map:
                 inf_fasta = FASTA(inf)
-                annotater = refseq_annotater(inf_fasta.read(), prefixes, extract_refseq_id)
+                annotater = refseq_annotater(inf_fasta.read(), prefixes, extract_refseq_id, depth=depth, depth_force=depth_force)
                 for lines_fna, lines_map in annotater:
                     output_fna.write(lines_fna)
                     output_map.write(lines_map)

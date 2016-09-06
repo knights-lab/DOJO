@@ -1,29 +1,36 @@
 from ninja_utils.utils import find_between
 
+from .annotater import  Annotater
 from ..database import RefSeqDatabase
 from ..taxonomy import NCBITree
 
 
-def refseq_annotater(gen_fasta, prefixes, extract_refseq_id, depth=7, depth_force=True):
-    begin, end = extract_refseq_id.split(',')
+class RefSeqAnnotater(Annotater):
+    def __init__(self, extract_gi, prefixes, db: RefSeqDatabase, tree: NCBITree, depth=7, depth_force=True):
+        Annotater.__init__(self)
 
-    db = RefSeqDatabase()
-    # check for the glob prefix
-    prefixes = prefixes.split(',')
-    if '*' in prefixes:
-        set_prefix = set([_ for _ in db.refseq_prefix_mapper.keys()])
-    else:
-        set_prefix = set([_ for _ in prefixes])
+        self.begin, self.end = extract_gi.split(',')
 
-    tree = NCBITree()
-    for title, seq in gen_fasta:
-        title = '>' + title
-        refseq_accession_version = find_between(title, begin, end)
-        if refseq_accession_version[:2] in set_prefix:
-            ncbi_tid = db.get_ncbi_tid_from_refseq_accession_version(refseq_accession_version)
-            if ncbi_tid:
-                gg = tree.green_genes_lineage(ncbi_tid[0], depth=depth, depth_force=depth_force)
-                if gg:
-                    gg = '; '.join(gg.split(';'))
-                    header = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title[1:])
-                    yield '>%s\n%s\n' % (header, seq), '%s\t%s\n' % (header.split()[0], gg)
+        prefixes = prefixes.split(',')
+        if '*' in prefixes:
+            self.set_prefix = set([_ for _ in db.refseq_prefix_mapper.keys()])
+        else:
+            self.set_prefix = set([_ for _ in prefixes])
+
+        self.tree = tree
+        self.db = db
+        self.depth = depth
+        self.depth_force = depth_force
+
+    def annotate(self, gen_fasta):
+        for title, seq in gen_fasta:
+            title = '>' + title
+            refseq_accession_version = find_between(title, self.begin, self.end)
+            if refseq_accession_version[:2] in self.set_prefix:
+                ncbi_tid = self.db.get_ncbi_tid_from_refseq_accession_version(refseq_accession_version)
+                if ncbi_tid:
+                    gg = self.tree.green_genes_lineage(ncbi_tid[0], depth=self.depth, depth_force=self.depth_force)
+                    if gg:
+                        gg = '; '.join(gg.split(';'))
+                        header = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title[1:])
+                        yield '>%s\n%s\n' % (header, seq), '%s\t%s\n' % (header.split()[0], gg)
