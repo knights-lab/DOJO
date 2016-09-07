@@ -1,12 +1,10 @@
 from ninja_utils.utils import find_between
 
-from .annotater import  Annotater
-from ..database import RefSeqDatabase
-from ..taxonomy import NCBITree
+from .annotater import Annotater
 
 
 class RefSeqAnnotater(Annotater):
-    def __init__(self, extract_refseq_accession_version, prefixes, db: RefSeqDatabase, tree: NCBITree, depth=7, depth_force=True):
+    def __init__(self, extract_refseq_accession_version, prefixes, db, tree, depth=7, depth_force=True):
         Annotater.__init__(self)
 
         self.begin, self.end = extract_refseq_accession_version.split(',')
