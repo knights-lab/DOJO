@@ -210,7 +210,7 @@ class GreenGenesLineage:
                 if val:
                     return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, 7-indx)))
         elif self.depth_force:
-            ';'.join('%s__%s' % i for i in zip(self._prefixes, self.names))
+            return ';'.join('%s__%s' % i for i in zip(self._prefixes, self.names))
         elif self.names[self.depth-1]:
             return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, self.depth)))
 

@@ -27,11 +27,8 @@ class RefSeqAnnotater(Annotater):
             refseq_accession_version = find_between(title, self.begin, self.end)
             if refseq_accession_version[:2] in self.set_prefix:
                 ncbi_tid = self.db.get_ncbi_tid_from_refseq_accession_version(refseq_accession_version)
-                print(refseq_accession_version)
-                print(ncbi_tid)
                 if ncbi_tid:
                     gg = self.tree.green_genes_lineage(ncbi_tid[0], depth=self.depth, depth_force=self.depth_force)
-                    print(gg)
                     if gg:
                         gg = '; '.join(gg.split(';'))
                         header = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title[1:])
