@@ -31,6 +31,7 @@ class RefSeqAnnotater(Annotater):
                 print(ncbi_tid)
                 if ncbi_tid:
                     gg = self.tree.green_genes_lineage(ncbi_tid[0], depth=self.depth, depth_force=self.depth_force)
+                    print(gg)
                     if gg:
                         gg = '; '.join(gg.split(';'))
                         header = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title[1:])
