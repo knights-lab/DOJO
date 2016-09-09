@@ -19,7 +19,7 @@ class NucleotideCatalog(Downloadable):
         string = urllib.request.urlopen(req).read().decode('utf-8')
 
         # Grab the filename ending with catalog.gz
-        pattern_cat = re.compile('[a-zA-Z0-9.-]*nuc[a-zA-Z0-9.-]*.taxid.gz')
+        pattern_cat = re.compile('[a-zA-Z0-9.-]*nucl_[a-zA-Z0-9.-]*taxid.gz')
         filelist = pattern_cat.findall(string)
 
         # Stream and extract
