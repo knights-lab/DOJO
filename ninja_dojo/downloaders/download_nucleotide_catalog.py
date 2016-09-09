@@ -23,7 +23,7 @@ class NucleotideCatalog(Downloadable):
         filelist = pattern_cat.findall(string)
 
         # Stream and extract
-        with open(os.path.join(self.path, 'nucleotid_catalog.csv'), 'wb') as out_fh:
+        with open(os.path.join(self.path, 'nucleotide_catalog.tsv'), 'wb') as out_fh:
             out_fh.write(b'\t'.join([
                 b'accession',
                 b'accession.version',
