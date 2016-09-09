@@ -19,7 +19,7 @@ def ninja_dojo_settings():
         'refseq_catalog_dir': ['data', 'refseq_catalog'],
         'refseq_ftp_prefix': 'ftp://ftp.ncbi.nlm.nih.gov/genomes/all/',
         'db_dir': ['db'],
-        'nucleotide_catalog_urls': 'ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/',
+        'nucleotide_catalog_urls': ['ftp://ftp.ncbi.nih.gov/pub/taxonomy/accession2taxid/'],
         'nucleotide_catalog_dir': ['data', 'nucleotide_catalog']
     }
 
