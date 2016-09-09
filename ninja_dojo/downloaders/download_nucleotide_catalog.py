@@ -30,9 +30,11 @@ class NucleotideCatalog(Downloadable):
                 b'taxid',
                 b'gi'
             ]) + b'\n')
-            for base in filelist:
+            for base in set(filelist):
                 url = self.urls[0] + base
                 req_file = urllib.request.Request(url)
                 with urllib.request.urlopen(req_file, 'rb') as ftp_stream:
-                    for line in line_bytestream_gzip(ftp_stream):
+                    gen = line_bytestream_gzip(ftp_stream)
+                    next(gen)
+                    for line in gen:
                         out_fh.write(line)
