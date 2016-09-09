@@ -176,6 +176,13 @@ class RefSeqDatabase:
                       'ftp_suffix TEXT,'
                       'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE'
                       ')')
+            c.execute('CREATE TABLE IF NOT EXISTS nucleotide('
+                      'ncbi_tid INTEGER,'
+                      'assembly_accession TEXT,'
+                      'assembly_version INTEGER,'
+                      'ftp_suffix TEXT,'
+                      'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE'
+                      ')')
             tree = NCBITree()
             assembly_map = RefseqAssemblyMap()
             refseq_catalog_map = RefseqCatalogMap()
