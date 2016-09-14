@@ -37,4 +37,4 @@ class GenbankCatalog(Downloadable):
                     gen = line_bytestream_gzip(ftp_stream)
                     next(gen)
                     for line in gen:
-                        out_fh.write(line)
+                        out_fh.write(line + b'\n')
