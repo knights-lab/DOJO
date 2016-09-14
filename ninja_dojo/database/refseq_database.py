@@ -180,9 +180,8 @@ class RefSeqDatabase:
                       'ncbi_tid INTEGER,'
                       'genbank_accession TEXT,'
                       'genbank_version INTEGER,'
-                      'gi INTEGER',
-                      'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE'
-                      ')')
+                      'gi INTEGER,'
+                      'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE)')
             tree = NCBITree()
             assembly_map = RefseqAssemblyMap()
             refseq_catalog_map = RefseqCatalogMap()
@@ -221,7 +220,7 @@ class RefSeqDatabase:
                 genbank_accession, genbank_version = row['accession.version'].split('.')
                 if '_' not in genbank_accession:
                     c.execute(
-                        'INSERT INTO genbank VALUES  (?,?,?,?)', (row['taxid'], genbank_accession, genbank_version, row['gi']))
+                        'INSERT INTO genbank VALUES  (?,?,?,?)', (int(row['taxid']), genbank_accession, genbank_version, int(row['gi'],)))
             c.execute('CREATE INDEX parent_ncbi_tid_index on taxonomy(parent_ncbi_tid)')
             c.execute('CREATE INDEX refseq_index on refseq(refseq_prefix, refseq_accession, refseq_version)')
             c.execute('CREATE INDEX refseq_gi_index on refseq(gi)')
