@@ -1,15 +1,14 @@
 import os
 import pandas as pd
-from collections import defaultdict
 
 from ninja_utils.factory import Pickleable, download
 
 from ... import SETTINGS, LOGGER
-from ...downloaders import NucleotideCatalog
+from ...downloaders import GenbankCatalog
 
 
-class NucleotideMap(Pickleable):
-    def __init__(self, _downloaders=(NucleotideCatalog(),)):
+class GenbankMap(Pickleable):
+    def __init__(self, _downloaders=(GenbankCatalog(),)):
         self._downloaders = _downloaders
         super().__init__(SETTINGS, LOGGER)
         self.df = self.parse_df()

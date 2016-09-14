@@ -6,7 +6,7 @@ from ninja_utils.utils import reverse_dict
 
 from .. import SETTINGS, LOGGER
 from ..taxonomy import NCBITree
-from ..taxonomy.maps import RefseqAssemblyMap, RefseqCatalogMap
+from ..taxonomy.maps import RefseqAssemblyMap, RefseqCatalogMap, GenbankMap
 
 
 class RefSeqDatabase:
@@ -176,16 +176,17 @@ class RefSeqDatabase:
                       'ftp_suffix TEXT,'
                       'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE'
                       ')')
-            c.execute('CREATE TABLE IF NOT EXISTS nucleotide('
+            c.execute('CREATE TABLE IF NOT EXISTS genbank ('
                       'ncbi_tid INTEGER,'
-                      'assembly_accession TEXT,'
-                      'assembly_version INTEGER,'
-                      'ftp_suffix TEXT,'
+                      'genbank_accession TEXT,'
+                      'genbank_version INTEGER,'
+                      'gi INTEGER',
                       'FOREIGN KEY(ncbi_tid) REFERENCES taxonomy(ncbi_tid) ON DELETE CASCADE ON UPDATE CASCADE'
                       ')')
             tree = NCBITree()
             assembly_map = RefseqAssemblyMap()
             refseq_catalog_map = RefseqCatalogMap()
+            genbank_map = GenbankMap()
 
             # prefix mapper
             refseq_prefix_counter = 0
@@ -216,9 +217,16 @@ class RefSeqDatabase:
                 ftp_suffix = row['ftp_path'][row['ftp_path'].find(row['assembly_accession'])+len(row['assembly_accession'])+1:]
                 c.execute('INSERT INTO assembly VALUES (?,?,?,?)',
                           (row['taxid'], assembly_accession, int(assembly_version), ftp_suffix,))
+            for index, row in assembly_map.parse_df().iterrows():
+                genbank_accession, genbank_version = row['accession.version'].split('.')
+                if '_' not in genbank_accession:
+                    c.execute(
+                        'INSERT INTO genbank VALUES  (?,?,?,?)', (row['taxid'], genbank_accession, genbank_version, row['gi']))
             c.execute('CREATE INDEX parent_ncbi_tid_index on taxonomy(parent_ncbi_tid)')
             c.execute('CREATE INDEX refseq_index on refseq(refseq_prefix, refseq_accession, refseq_version)')
-            c.execute('CREATE INDEX gi_index on refseq(gi)')
+            c.execute('CREATE INDEX refseq_gi_index on refseq(gi)')
+            c.execute('CREATE INDEX genbank_index on genbank(genbank_accession, genbank_version)')
+            c.execute('CREATE INDEX genbank_gi_index on genbank(gi)')
             c.execute('CREATE INDEX assembly_index on assembly(assembly_accession, assembly_version)')
             metadata = dict(zip(('ncbi_rank_mapper', 'refseq_prefix_mapper', 'ftp_prefix'),
                                 (ncbi_rank_mapper, refseq_prefix_mapper, ftp_prefix)))
