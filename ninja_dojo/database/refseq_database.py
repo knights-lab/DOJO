@@ -216,7 +216,7 @@ class RefSeqDatabase:
                 ftp_suffix = row['ftp_path'][row['ftp_path'].find(row['assembly_accession'])+len(row['assembly_accession'])+1:]
                 c.execute('INSERT INTO assembly VALUES (?,?,?,?)',
                           (row['taxid'], assembly_accession, int(assembly_version), ftp_suffix,))
-            for index, row in assembly_map.parse_df().iterrows():
+            for index, row in genbank_map.parse_df().iterrows():
                 genbank_accession, genbank_version = row['accession.version'].split('.')
                 if '_' not in genbank_accession:
                     c.execute(
