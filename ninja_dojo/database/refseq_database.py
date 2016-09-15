@@ -150,6 +150,20 @@ class RefSeqDatabase:
 
         return cur.fetchone()
 
+    def get_ncbi_tid_from_genbank_accession(self, genbank_accession):
+        cur = self.conn.cursor()
+
+        cur.execute('SELECT ncbi_tid FROM genbank WHERE genbank_accession = ?', (genbank_accession,))
+
+        return cur.fetchone()
+
+    def get_ncbi_tid_from_genbank_accession_version(self, genbank_accession_version):
+        cur = self.conn.cursor()
+
+        cur.execute('SELECT ncbi_tid FROM genbank WHERE genbank_accession = ? AND genbank_version = ?', genbank_accession_version.split('.'))
+
+        return cur.fetchone()
+
     @classmethod
     def _create(cls, db_dir, ftp_prefix):
         with sqlite3.connect(os.path.join(db_dir, 'refseq.db')) as conn:
