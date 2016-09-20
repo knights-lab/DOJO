@@ -160,7 +160,9 @@ class RefSeqDatabase:
     def get_ncbi_tid_from_genbank_accession_version(self, genbank_accession_version):
         cur = self.conn.cursor()
 
-        cur.execute('SELECT ncbi_tid FROM genbank WHERE genbank_accession = ? AND genbank_version = ?', genbank_accession_version.split('.'))
+        genbank_accession, genbank_version = genbank_accession_version.split('.')
+
+        cur.execute('SELECT ncbi_tid FROM genbank WHERE genbank_accession = ? AND genbank_version = ?', (genbank_accession, genbank_version))
 
         return cur.fetchone()
 
