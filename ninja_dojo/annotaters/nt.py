@@ -6,7 +6,6 @@ from ..taxonomy import NCBITree
 
 
 class NTAnnotater(Annotater):
-    def __init__(self, extract_gi, db: RefSeqDatabase, tree: NCBITree, depth=7, depth_force=True):
         def __init__(self, extract_refseq_accession_version, prefixes, db, tree, depth=7, depth_force=True):
             Annotater.__init__(self)
 
