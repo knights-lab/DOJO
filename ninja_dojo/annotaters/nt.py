@@ -31,7 +31,10 @@ class NTAnnotater(Annotater):
                     if accession_version[:2] in self.set_prefix:
                         ncbi_tid = self.db.get_ncbi_tid_from_refseq_accession_version(accession_version)
                 else:
-                    ncbi_tid = self.db.get_ncbi_tid_from_genbank_accession_version(accession_version)
+                    if '.' in accession_version:
+                        ncbi_tid = self.db.get_ncbi_tid_from_genbank_accession_version(accession_version)
+                    else:
+                        ncbi_tid = self.db.get_ncbi_tid_from_genbank_accession(accession_version)
 
                 if ncbi_tid:
                     gg = self.tree.green_genes_lineage(ncbi_tid[0], depth=self.depth, depth_force=self.depth_force)
