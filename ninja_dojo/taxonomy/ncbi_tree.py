@@ -192,9 +192,9 @@ class GreenGenesLineage:
     def __init__(self, depth_force=False, depth=7):
         self.depth_force = depth_force
         self.depth = depth
-        self.names = list(itertools.repeat('', 7))
-        self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'), range(7)))
-        self._prefixes = ('k', 'p', 'c', 'o', 'f', 'g', 's')
+        self.names = list(itertools.repeat('', 8))
+        self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'), range(8)))
+        self._prefixes = ('k', 'p', 'c', 'o', 'f', 'g', 's', 't')
 
     def __setitem__(self, rank, name):
         if rank in self._lineage_ranks:
@@ -208,7 +208,7 @@ class GreenGenesLineage:
         if not self.depth:
             for indx, val in enumerate(reversed(self.names)):
                 if val:
-                    return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, 7-indx)))
+                    return ';'.join('%s__%s' % i for i in zip(self._prefixes, itertools.islice(self.names, 8-indx)))
         elif self.depth_force:
             return ';'.join('%s__%s' % i for i in zip(self._prefixes, self.names))
         elif self.names[self.depth-1]:
