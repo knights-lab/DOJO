@@ -163,9 +163,10 @@ class NCBITree(Pickleable):
     def green_genes_lineage(self, taxon_id, depth=7, depth_force=False):
         taxon_id_lineage = self.get_taxon_id_lineage_with_taxon_id(taxon_id)
         lineage = GreenGenesLineage(depth=depth, depth_force=depth_force)
-        for x in taxon_id_lineage:
-            rank = self.tree.node[x]['rank']
-            name = self.taxon_id2name[x]
+        for node_id in taxon_id_lineage:
+            rank = self.tree.node[node_id]['rank']
+            name = self.taxon_id2name[node_id]
+            print(rank)
             lineage[rank] = name
         try:
             return str(lineage)
@@ -192,11 +193,19 @@ class GreenGenesLineage:
     def __init__(self, depth_force=False, depth=7):
         self.depth_force = depth_force
         self.depth = depth
+        self.strain_flag = self.depth == 8
+        self.strain_name = None
         self.names = list(itertools.repeat('', 8))
         self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'), range(8)))
         self._prefixes = ('k', 'p', 'c', 'o', 'f', 'g', 's', 't')
 
     def __setitem__(self, rank, name):
+        if self.strain_flag:
+            if rank == 'species':
+                self.names[self._lineage_ranks['strain']] = self.strain_name
+                self.strain_flag = False
+            elif not self.strain_name:
+                self.strain_name = name.replace(' ', '_')
         if rank in self._lineage_ranks:
             self.names[self._lineage_ranks[rank]] = name.replace(' ', '_')
 
@@ -216,11 +225,14 @@ class GreenGenesLineage:
 
     def reset(self):
         self.names = list(itertools.repeat('', self.depth))
+        self.strain_flag = self.depth == 8
+        self.strain_name = None
+
 
 
 def main():
     ncbi_tree = NCBITree()
-    print(ncbi_tree.gg_lineage(9606))
+    print(ncbi_tree.green_genes_lineage(9606))
 
 if __name__ == '__main__':
     main()
