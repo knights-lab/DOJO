@@ -19,4 +19,10 @@ The NCBI taxonominy ID (TID) for *Homo Sapien* is:
 
 With its formatted string:
 
-k__Eukaryota;p__Chordata;c__Mammalia;o__Primates;f__Hominidae;g__Homo;s__Homo_sapiens
+k__Eukaryota;p__Chordata;c__Mammalia;o__Primates;f__Hominidae;g__Homo;s__Homo_sapiens;t__
+
+# installation
+```
+# NINJA-DOJO
+pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade
+```
