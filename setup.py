@@ -33,3 +33,4 @@ setup(
     keywords='',
     install_requires=['click', 'networkx', 'nose', 'pandas', 'blaze', 'cytoolz']
 )
+#TODO scipy 0.18.1 breaks python date-utils installation currently, don't know why. Force this version in the actual setup.py

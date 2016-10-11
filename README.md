@@ -24,5 +24,6 @@ k__Eukaryota;p__Chordata;c__Mammalia;o__Primates;f__Hominidae;g__Homo;s__Homo_sa
 # installation
 ```
 # NINJA-DOJO
-pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade
+pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade scipy==0.18.0
+#TODO scipy 0.18.1 breaks python date-utils installation currently, don't know why. Force this version in the actual setup.py
 ```
