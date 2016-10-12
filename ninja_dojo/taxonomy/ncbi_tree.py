@@ -166,7 +166,6 @@ class NCBITree(Pickleable):
         for node_id in taxon_id_lineage:
             rank = self.tree.node[node_id]['rank']
             name = self.taxon_id2name[node_id]
-            print(rank)
             lineage[rank] = name
         try:
             return str(lineage)
