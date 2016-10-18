@@ -24,5 +24,5 @@ k__Eukaryota;p__Chordata;c__Mammalia;o__Primates;f__Hominidae;g__Homo;s__Homo_sa
 # installation
 ```
 # NINJA-DOJO
-pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade scipy==0.18.0
+pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade scipy==1.8.0
 ```
