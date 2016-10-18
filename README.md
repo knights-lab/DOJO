@@ -21,8 +21,8 @@ With its formatted string:
 
 k__Eukaryota;p__Chordata;c__Mammalia;o__Primates;f__Hominidae;g__Homo;s__Homo_sapiens;t__
 
-# installation
+# Installation
 ```
 # NINJA-DOJO
-pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade scipy==1.8.0
+pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade
 ```

@@ -194,18 +194,21 @@ class GreenGenesLineage:
         self.depth = depth
         self.strain_flag = self.depth == 8
         self.strain_name = None
-        self.names = list(itertools.repeat('', 8))
-        self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'), range(8)))
+        self.names = list(itertools.repeat('', self.depth))
+        self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'), range(self.depth)))
         self._prefixes = ('k', 'p', 'c', 'o', 'f', 'g', 's', 't')
 
     def __setitem__(self, rank, name):
         if self.strain_flag:
             if rank == 'species':
                 self.names[self._lineage_ranks['strain']] = self.strain_name
+                self.names[self._lineage_ranks['species']] = name.replace(' ', '_')
                 self.strain_flag = False
             elif not self.strain_name:
                 self.strain_name = name.replace(' ', '_')
-        if rank in self._lineage_ranks:
+        elif rank in self._lineage_ranks:
+            print(self.names)
+            print(self._lineage_ranks[rank])
             self.names[self._lineage_ranks[rank]] = name.replace(' ', '_')
 
     def __getitem__(self, rank):
