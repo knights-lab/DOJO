@@ -11,7 +11,7 @@ __version__ = "0.0.1-dev"
 long_description = ''
 
 setup(
-    name='ninja_dojo',
+    name='dojo',
     version=__version__,
     packages=find_packages(),
     url='',
@@ -24,10 +24,10 @@ setup(
     # scripts=glob(os.path.join('scripts', '*py')),
     entry_points={
         'console_scripts': [
-            'annotate_fasta = ninja_dojo.scripts.annotate_fasta:annotate_fasta',
-            'extract_ncbi_tid_from_mp2_gold = ninja_dojo.scripts.extract_ncbi_tid_from_mp2_gold:extract_ncbi_tid',
-            'refseq_get_ftp_links_from_file = ninja_dojo.scripts.refseq_get_ftp_links_from_file',
-            'hardmasker = ninja_dojo.scripts.hardmasker:hardmasker',
+            'annotate_fasta = dojo.scripts.annotate_fasta:annotate_fasta',
+            'extract_ncbi_tid_from_mp2_gold = dojo.scripts.extract_ncbi_tid_from_mp2_gold:extract_ncbi_tid',
+            'refseq_get_ftp_links_from_file = dojo.scripts.refseq_get_ftp_links_from_file',
+            'hardmasker = dojo.scripts.hardmasker:hardmasker',
         ]
     },
     keywords='',
