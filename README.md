@@ -1,4 +1,4 @@
-NINJA-DOJO (Database of Justified Ontologies)
+DOJO (Database of Justified Ontologies)
 =======
 Designed to house *in silico* and *in vitro* communities for benchmarking functional and taxonomic classification tasks.
 
@@ -23,6 +23,6 @@ k__Eukaryota;p__Chordata;c__Mammalia;o__Primates;f__Hominidae;g__Homo;s__Homo_sa
 
 # Installation
 ```
-# NINJA-DOJO
-pip install git+https://github.com/knights-lab/NINJA-DOJO.git --no-cache-dir --upgrade
+# DOJO
+pip install git+https://github.com/knights-lab/DOJO.git --no-cache-dir --upgrade
 ```

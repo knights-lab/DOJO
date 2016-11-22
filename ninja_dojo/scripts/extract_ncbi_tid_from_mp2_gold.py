@@ -8,7 +8,7 @@ import csv
 
 from ninja_utils.parsers import FASTQ
 
-from ninja_dojo.taxonomy.maps import RefseqCatalogMap
+from dojo.taxonomy.maps import RefseqCatalogMap
 
 
 @click.command()

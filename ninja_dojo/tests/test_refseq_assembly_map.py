@@ -1,7 +1,7 @@
 import unittest
 from nose.tools import assert_equals
 
-from ninja_dojo.taxonomy.maps import RefseqAssemblyMap
+from dojo.taxonomy.maps import RefseqAssemblyMap
 
 
 class RefseqAssemblyMapTest(unittest.TestCase):
