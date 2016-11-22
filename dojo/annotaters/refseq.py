@@ -21,7 +21,6 @@ class RefSeqAnnotater(Annotater):
         self.depth_force = depth_force
 
     def annotate(self, gen_fasta):
-        print(gen_fasta)
         for title, seq in gen_fasta:
             title = '>' + title
             refseq_accession_version = find_between(title, self.begin, self.end)
