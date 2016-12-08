@@ -1,7 +1,7 @@
 import unittest
 from nose.tools import assert_equals
 
-from ninja_dojo.taxonomy import NCBITree
+from dojo.taxonomy import NCBITree
 
 
 class TestGGLineage(unittest.TestCase):

@@ -2,8 +2,8 @@
 import click
 import re
 
-from ninja_dojo.database import RefSeqDatabase
-from ninja_dojo.taxonomy import NCBITree
+from dojo.database import RefSeqDatabase
+from dojo.taxonomy import NCBITree
 
 
 

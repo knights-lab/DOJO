@@ -6,7 +6,7 @@ import re
 from collections import defaultdict
 from ninja_utils.utils import line_bytestream_gzip, find_between
 
-from ninja_dojo.database import RefSeqDatabase
+from dojo.database import RefSeqDatabase
 
 
 def binary_fasta(fh, db, prefix_set):

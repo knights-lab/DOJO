@@ -1,4 +1,4 @@
-def ninja_dojo_settings():
+def dojo_settings():
     default_settings = {
         'default_dir': [''],
         'docs_dir': ['docs'],

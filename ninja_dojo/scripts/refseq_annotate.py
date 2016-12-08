@@ -4,7 +4,7 @@ import click
 from ninja_utils.parsers import FASTA
 from ninja_utils.utils import find_between
 
-from ninja_dojo.database import RefSeqDatabase
+from dojo.database import RefSeqDatabase
 
 
 @click.command()
