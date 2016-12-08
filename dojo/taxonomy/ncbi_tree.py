@@ -207,8 +207,6 @@ class GreenGenesLineage:
             elif not self.strain_name:
                 self.strain_name = name.replace(' ', '_')
         elif rank in self._lineage_ranks:
-            print(self.names)
-            print(self._lineage_ranks[rank])
             self.names[self._lineage_ranks[rank]] = name.replace(' ', '_')
 
     def __getitem__(self, rank):
