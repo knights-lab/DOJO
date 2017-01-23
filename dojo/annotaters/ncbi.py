@@ -19,8 +19,8 @@ class NCBIAnnotater(Annotater):
             # Extract NCBI TID and Convert to INT
             ncbi_tid = int(find_between(title, self.begin, self.end))
             if ncbi_tid:
-                gg = self.tree.green_genes_lineage(ncbi_tid[0], depth=self.depth, depth_force=self.depth_force)
+                gg = self.tree.green_genes_lineage(ncbi_tid, depth=self.depth, depth_force=self.depth_force)
                 if gg:
                     gg = '; '.join(gg.split(';'))
-                    header = 'ncbi_tid|%d|%s' % (ncbi_tid[0], title[1:])
+                    header = 'ncbi_tid|%d|%s' % (ncbi_tid, title[1:])
                     yield '>%s\n%s\n' % (header, seq), '%s\t%s\n' % (header.split()[0], gg)
