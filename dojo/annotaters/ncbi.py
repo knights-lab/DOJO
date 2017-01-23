@@ -16,7 +16,8 @@ class NCBIAnnotater(Annotater):
     def annotate(self, gen_fasta):
         for title, seq in gen_fasta:
             title = '>' + title
-            ncbi_tid = find_between(title, self.begin, self.end)
+            # Extract NCBI TID and Convert to INT
+            ncbi_tid = int(find_between(title, self.begin, self.end))
             if ncbi_tid:
                 gg = self.tree.green_genes_lineage(ncbi_tid[0], depth=self.depth, depth_force=self.depth_force)
                 if gg:
