@@ -4,7 +4,7 @@ import os
 from ninja_utils.utils import reverse_dict
 from ninja_utils.factory import Pickleable, Scroll, scrolling
 
-from ... import SETTINGS
+from ... import SETTINGS, LOGGER
 
 
 class IMGMap(Pickleable):
@@ -14,7 +14,7 @@ class IMGMap(Pickleable):
         :param img_taxdmp_dir:
         """
         self._scroll = _scroll
-        super().__init__()
+        super().__init__(SETTINGS, LOGGER)
 
     @scrolling
     def _parse(self):
