@@ -174,18 +174,23 @@ class NCBITree(Pickleable):
 
     @cytoolz.memoize()
     def lowest_common_ancestor(self, p, q):
-        path_p = nx.shortest_path(self.tree, p, 1)
-        path_q = nx.shortest_path(self.tree, q, 1)
+        try:
+            path_p = nx.shortest_path(self.tree, p, 1)
+            path_q = nx.shortest_path(self.tree, q, 1)
 
-        size_p = len(path_p)
-        size_q = len(path_q)
+            size_p = len(path_p)
+            size_q = len(path_q)
 
-        p_off = size_p - size_q if size_p - size_q > 0 else 0
-        q_off = size_q - size_p if size_q - size_p > 0 else 0
+            p_off = size_p - size_q if size_p - size_q > 0 else 0
+            q_off = size_q - size_p if size_q - size_p > 0 else 0
 
-        for i, j in zip(path_p[p_off:], path_q[q_off:]):
-            if i == j:
-                return i
+            for i, j in zip(path_p[p_off:], path_q[q_off:]):
+                if i == j:
+                    return i
+        # Unable to find a node in the digraph
+        except nx.exception.NetworkXError:
+            return None
+
 
 
 class GreenGenesLineage:

@@ -21,3 +21,11 @@ class TestGGLineage(unittest.TestCase):
 
 
         print(strain_name_6)
+
+
+class TestLCA(unittest.TestCase):
+    def test(self):
+        ncbi_tree = NCBITree()
+        # Try LCA with a null-pointer
+        lca = ncbi_tree.lowest_common_ancestor(391904, -10)
+        print(lca)
