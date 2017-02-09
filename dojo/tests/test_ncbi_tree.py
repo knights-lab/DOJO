@@ -16,5 +16,8 @@ class TestGGLineage(unittest.TestCase):
         strain_name_5 = ncbi_tree.green_genes_lineage(391904, depth=8, depth_force=True)
         strain_name_6 = ncbi_tree.green_genes_lineage(391904, depth=8, depth_force=False)
 
+        # Test the null pointer
+        strain_name_7 = ncbi_tree.green_genes_lineage(-10, depth=8)
+
 
         print(strain_name_6)
