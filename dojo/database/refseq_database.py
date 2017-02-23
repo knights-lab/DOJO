@@ -226,23 +226,25 @@ class RefSeqDatabase:
                     refseq_prefix_counter += 1
                 c.execute('INSERT INTO refseq VALUES (?,?,?,?,?,?)',
                           (row['ncbi_tid'], refseq_prefix_mapper[refseq_prefix], refseq_accession, int(refseq_version), row['gi'], row['length'],))
-            for index, row in assembly_map.parse_df().iterrows():
-                assembly_accession, assembly_version = row['assembly_accession'].split('.')
-                # remove the underscore and start at the end
-                ftp_suffix = row['ftp_path'][row['ftp_path'].find(row['assembly_accession'])+len(row['assembly_accession'])+1:]
-                c.execute('INSERT INTO assembly VALUES (?,?,?,?)',
-                          (row['taxid'], assembly_accession, int(assembly_version), ftp_suffix,))
-            for index, row in genbank_map.parse_df().iterrows():
-                genbank_accession, genbank_version = row['accession.version'].split('.')
-                if '_' not in genbank_accession:
-                    c.execute(
-                        'INSERT INTO genbank VALUES  (?,?,?,?)', (int(row['taxid']), genbank_accession, genbank_version, int(row['gi'],)))
+
+            # TODO: Remove this section
+            # for index, row in assembly_map.parse_df().iterrows():
+            #     assembly_accession, assembly_version = row['assembly_accession'].split('.')
+            #     # remove the underscore and start at the end
+            #     ftp_suffix = row['ftp_path'][row['ftp_path'].find(row['assembly_accession'])+len(row['assembly_accession'])+1:]
+            #     c.execute('INSERT INTO assembly VALUES (?,?,?,?)',
+            #               (row['taxid'], assembly_accession, int(assembly_version), ftp_suffix,))
+            # for index, row in genbank_map.parse_df().iterrows():
+            #     genbank_accession, genbank_version = row['accession.version'].split('.')
+            #     if '_' not in genbank_accession:
+            #         c.execute(
+            #             'INSERT INTO genbank VALUES  (?,?,?,?)', (int(row['taxid']), genbank_accession, genbank_version, int(row['gi'],)))
             c.execute('CREATE INDEX parent_ncbi_tid_index on taxonomy(parent_ncbi_tid)')
             c.execute('CREATE INDEX refseq_index on refseq(refseq_prefix, refseq_accession, refseq_version)')
             c.execute('CREATE INDEX refseq_gi_index on refseq(gi)')
-            c.execute('CREATE INDEX genbank_index on genbank(genbank_accession, genbank_version)')
-            c.execute('CREATE INDEX genbank_gi_index on genbank(gi)')
-            c.execute('CREATE INDEX assembly_index on assembly(assembly_accession, assembly_version)')
+            # c.execute('CREATE INDEX genbank_index on genbank(genbank_accession, genbank_version)')
+            # c.execute('CREATE INDEX genbank_gi_index on genbank(gi)')
+            # c.execute('CREATE INDEX assembly_index on assembly(assembly_accession, assembly_version)')
             metadata = dict(zip(('ncbi_rank_mapper', 'refseq_prefix_mapper', 'ftp_prefix'),
                                 (ncbi_rank_mapper, refseq_prefix_mapper, ftp_prefix)))
             with open(os.path.join(db_dir, 'metadata.json'), 'w') as outfile:
