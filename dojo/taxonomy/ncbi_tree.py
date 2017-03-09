@@ -215,11 +215,15 @@ class GreenGenesLineage:
 
         if self.strain_flag:
             if rank == 'species':
-                self.names[self._lineage_ranks['strain']] = self.first_name
-                self.names[self._lineage_ranks['species']] = self.current_name
-                self.strain_flag = False
+                if self.first_name != self.current_name:
+                    self.names[self._lineage_ranks['strain']] = self.first_name
+                    self.names[self._lineage_ranks['species']] = self.current_name
+                    self.strain_flag = False
+                else:
+                    self.strain_flag = False
         elif rank in self._lineage_ranks:
             self.names[self._lineage_ranks[rank]] = self.current_name
+
         if self.current_name == "Viruses":
             self.names[self._lineage_ranks['phylum']] = self.previous_name
 
