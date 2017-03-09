@@ -23,7 +23,7 @@ def add_green_genes_tax_to_gb_accession(input, output):
         out_row = row + [0]
         taxid = int(row[1])
         out_row[2] = nt.green_genes_lineage(taxid, depth=8, depth_force=True)
-        output_csv.write(out_row)
+        output_csv.writerow(out_row)
 
 
 if __name__ == '__main__':
