@@ -17,7 +17,7 @@ def add_green_genes_tax_to_gb_accession(input, output):
 
     output_csv = csv.writer(output, delimiter="\t")
     # Write header
-    output_csv.write(["gb_accession", "taxid", "green_genes_taxonomy"])
+    output_csv.writerow(["gb_accession", "taxid", "green_genes_taxonomy"])
     csv_input = csv.reader(input, delimiter="\t")
     for row in csv_input:
         out_row = row + [0]
