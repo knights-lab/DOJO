@@ -192,27 +192,36 @@ class NCBITree(Pickleable):
             return None
 
 
-
 class GreenGenesLineage:
     def __init__(self, depth_force=False, depth=7):
         self.depth_force = depth_force
         self.depth = depth
         self.strain_flag = self.depth == 8
-        self.strain_name = None
         self.names = list(itertools.repeat('', self.depth))
         self._lineage_ranks = dict(zip(('superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'strain'), range(self.depth)))
         self._prefixes = ('k', 'p', 'c', 'o', 'f', 'g', 's', 't')
+        self.previous_name = None
+        self.current_name = None
+        self.first_name = None
+        self.first_flag = True
 
     def __setitem__(self, rank, name):
+        self.previous_name = self.current_name
+        self.current_name = name.replace(" ", "_")
+
+        if self.first_flag:
+            self.first_flag = False
+            self.first_name = self.current_name
+
         if self.strain_flag:
             if rank == 'species':
-                self.names[self._lineage_ranks['strain']] = self.strain_name
-                self.names[self._lineage_ranks['species']] = name.replace(' ', '_')
+                self.names[self._lineage_ranks['strain']] = self.first_name
+                self.names[self._lineage_ranks['species']] = self.current_name
                 self.strain_flag = False
-            elif not self.strain_name:
-                self.strain_name = name.replace(' ', '_')
         elif rank in self._lineage_ranks:
-            self.names[self._lineage_ranks[rank]] = name.replace(' ', '_')
+            self.names[self._lineage_ranks[rank]] = self.current_name
+        if self.current_name == "Viruses":
+            self.names[self._lineage_ranks['phylum']] = self.previous_name
 
     def __getitem__(self, rank):
         if rank in self._lineage_ranks:
@@ -231,7 +240,10 @@ class GreenGenesLineage:
     def reset(self):
         self.names = list(itertools.repeat('', self.depth))
         self.strain_flag = self.depth == 8
-        self.strain_name = None
+        self.previous_name = None
+        self.current_name = None
+        self.first_name = None
+        self.first_flag = True
 
 
 
