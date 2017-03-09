@@ -217,10 +217,10 @@ class GreenGenesLineage:
             if rank == 'species':
                 if self.first_name != self.current_name:
                     self.names[self._lineage_ranks['strain']] = self.first_name
-                    self.names[self._lineage_ranks['species']] = self.current_name
                     self.strain_flag = False
                 else:
                     self.strain_flag = False
+            self.names[self._lineage_ranks['species']] = self.current_name
         elif rank in self._lineage_ranks:
             self.names[self._lineage_ranks[rank]] = self.current_name
 
