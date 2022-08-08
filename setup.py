@@ -26,7 +26,7 @@ setup(
         'console_scripts': [
             'annotate_fasta = dojo.scripts.annotate_fasta:annotate_fasta',
             'extract_ncbi_tid_from_mp2_gold = dojo.scripts.extract_ncbi_tid_from_mp2_gold:extract_ncbi_tid',
-            'refseq_get_ftp_links_from_file = dojo.scripts.refseq_get_ftp_links_from_file',
+            'refseq_get_ftp_links_from_file = dojo.scripts.refseq_get_ftp_links_from_file:refseq_get_ftp_links_from_file',
             'hardmasker = dojo.scripts.hardmasker:hardmasker',
             'add_green_genes_tax_to_gb_accession = dojo.scripts.add_green_genes_tax_to_gb_accession:add_green_genes_tax_to_gb_accession',
         ]
